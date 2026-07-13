@@ -15,8 +15,8 @@ interface AnalyticsDualChartProps {
 
 /**
  * Two vertically stacked line charts:
- *   - Top: Mortalidad materna (San Martin del Valle, por 100.000 NV)
- *   - Bottom: Selected education indicator (San Martin del Valle weighted mean)
+ *   - Top: Mortalidad materna (Suaza, por 100.000 NV)
+ *   - Bottom: Selected education indicator (Suaza weighted mean)
  */
 export const AnalyticsDualChart = ({
   data,

@@ -216,8 +216,8 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
       navbar: true,
     },
     {
-      slug: 'analisis/mortalidad-materna',
-      title: 'Análisis de Mortalidad Materna',
+      slug: 'analisis/mortalidad-por-suicidio',
+      title: 'Análisis de Mortalidad por Suicidio',
       text: 'Análisis de relaciones',
       description: 'Indicadores de análisis de datos y visualización.',
       date: '2026-01-01',

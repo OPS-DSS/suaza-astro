@@ -1,9 +1,9 @@
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js'
 
-import MaternalMortalityInequity from '@/components/maternal-mortality/MaternalMortalityInequity.astro'
+import MaternalMortalityInequity from '@/components/suicide-mortality/MaternalMortalityInequity.astro'
 import Analytics from '@/components/analytics/Analytics.astro'
 import Welcome from '@/components/Welcome.astro'
-import MaternalMortalitySDoH from '@/components/maternal-mortality/MaternalMortalitySDoH.astro'
+import MaternalMortalitySDoH from '@/components/suicide-mortality/MaternalMortalitySDoH.astro'
 import PrioritySelector from '@/components/PrioritySelector.astro'
 import StratifiedIndicator from '@/components/StratifiedIndicator.astro'
 
@@ -78,11 +78,11 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
   },
 
   // ─── Detail pages ──────────────────────────────────────────────────────────
-  'determinantes-de-la-salud/mortalidad-materna': {
+  'determinantes-de-la-salud/mortalidad-por-suicidio': {
     component: MaternalMortalitySDoH,
     resolveProps: ({ title, text }) => ({ title, text }),
   },
-  'analisis-de-inequidad/mortalidad-materna': {
+  'analisis-de-inequidad/mortalidad-por-suicidio': {
     component: MaternalMortalityInequity,
     resolveProps: ({ title, text, data, source }, baseUrl) => ({
       title,
@@ -92,7 +92,7 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       csvPath: base(baseUrl, 'maternal_mortality_rate.csv'),
     }),
   },
-  'analisis/mortalidad-materna': {
+  'analisis/mortalidad-por-suicidio': {
     component: Analytics,
     resolveProps: (
       {
