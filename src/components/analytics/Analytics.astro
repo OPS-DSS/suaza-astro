@@ -1,0 +1,53 @@
+---
+import { AnalyticsPageContent } from './AnalyticsPageContent'
+import type {
+  ForestPlotDataRow,
+  AnalyticsMaternalRow,
+  ScatterMaternalRow,
+} from '@/lib/parquet'
+import type { AnalyticsIndicatorKey } from './mockIndicators'
+
+interface Props {
+  title: string
+  text: string
+  forestPlotData?: ForestPlotDataRow[]
+  analyticsMaternalData?: AnalyticsMaternalRow[]
+  scatterMaternalData?: ScatterMaternalRow[]
+  geojsonUrls?: Record<AnalyticsIndicatorKey, Record<number, string>>
+  maternalGeojsonUrls?: Record<number, string>
+  dssBivariateGeojsonUrls?: Partial<
+    Record<
+      AnalyticsIndicatorKey,
+      Partial<Record<AnalyticsIndicatorKey, Record<number, string>>>
+    >
+  >
+  csvUrl?: string
+}
+
+const {
+  title,
+  forestPlotData,
+  analyticsMaternalData,
+  scatterMaternalData,
+  geojsonUrls,
+  maternalGeojsonUrls,
+  dssBivariateGeojsonUrls,
+  csvUrl,
+} = Astro.props
+---
+
+<div class="mx-auto max-w-[120em] px-2 sm:px-6 lg:px-10 mb-16">
+  <div class="flex flex-col gap-2">
+    <h1 class="text-3xl font-bold my-6">{title}</h1>
+    <AnalyticsPageContent
+      forestPlotData={forestPlotData}
+      analyticsMaternalData={analyticsMaternalData}
+      scatterMaternalData={scatterMaternalData}
+      geojsonUrls={geojsonUrls}
+      maternalGeojsonUrls={maternalGeojsonUrls}
+      dssBivariateGeojsonUrls={dssBivariateGeojsonUrls}
+      csvUrl={csvUrl}
+      client:only="react"
+    />
+  </div>
+</div>
