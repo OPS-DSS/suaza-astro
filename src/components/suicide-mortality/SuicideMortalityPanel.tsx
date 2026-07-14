@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import { SuicideMortalityChart } from './SuicideMortalityChart'
 import type { Stratifier } from './SuicideMortalityChart'
-import { SuicideMortalityEthnicGapsChart } from './SuicideMortalityEthnicGapsChart'
+import { SuicideMortalityGenderGapsChart } from './SuicideMortalityGenderGapsChart'
 import type { SuicideMortalityRateRow } from '@/lib/parquet'
 
 const SMV = 'Suaza'
@@ -75,7 +75,7 @@ export const SuicideMortalityPanel = ({
               Brecha absoluta y relativa entre población femenina y masculina.
             </p>
           </div>
-          <SuicideMortalityEthnicGapsChart
+          <SuicideMortalityGenderGapsChart
             data={data}
             selectedYear={effectiveYear}
           />

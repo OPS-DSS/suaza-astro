@@ -127,7 +127,7 @@ export function filterSuicideMortalityRateRows(
     if (!Number.isFinite(anio) || !Number.isFinite(valor)) continue
     result.push({ territorio, anio, sexo, valor })
   }
-  return result.sort((a, b) => a.anio - b.anio).filter((r) => r.anio > 2016)
+  return result.sort((a, b) => a.anio - b.anio).filter((r) => r.anio > 2010)
 }
 
 /**
