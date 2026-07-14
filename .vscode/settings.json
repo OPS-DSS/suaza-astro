@@ -1,0 +1,26 @@
+{
+  "json.schemaDownload.enable": true,
+  "json.schemas": [
+    {
+      "fileMatch": ["*.json"],
+      "url": "https://v2-8-3.turborepo.dev/schema.json"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/DavidAnson/markdownlint/v0.40.0/schema/markdownlint-config-schema.json"
+    },
+    {
+      "url": "https://ui.shadcn.com/schema.json"
+    }
+  ],
+  "r.bracketedPaste": true,
+  "r.plot.useHttpgd": true,
+  "r.sessionWatcher": true,
+  "r.alwaysUseActiveTerminal": true,
+  "[r]": {
+    "editor.defaultFormatter": "REditorSupport.r",
+    "editor.formatOnSave": true
+  },
+  "[rmd]": {
+    "editor.defaultFormatter": "REditorSupport.r"
+  }
+}
