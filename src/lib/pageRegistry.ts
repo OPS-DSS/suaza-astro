@@ -5,16 +5,15 @@ import Analytics from '@/components/analytics/Analytics.astro'
 import Welcome from '@/components/Welcome.astro'
 import SuicideMortalitySDoH from '@/components/suicide-mortality/SuicideMortalitySDoH.astro'
 import PrioritySelector from '@/components/PrioritySelector.astro'
-import StratifiedIndicator from '@/components/StratifiedIndicator.astro'
+import DSSIndicator from '@/components/DSSIndicator.astro'
 
 import type {
   SuicideMortalityRateRow,
   ForestPlotDataRow,
   AnalyticsSuicideRow,
   ScatterSuicideRow,
-  StratifiedRow,
+  SimpleRow,
 } from '@/lib/parquet'
-import type { IndicatorStratifier } from '@/lib/indicators'
 
 export interface PageProps {
   title: string
@@ -29,14 +28,8 @@ export interface PageProps {
   forestPlotData?: ForestPlotDataRow[]
   analyticsSuicideData?: AnalyticsSuicideRow[]
   scatterSuicideData?: ScatterSuicideRow[]
-  trasladoData?: StratifiedRow[]
-  frecuenciaTransporteData?: StratifiedRow[]
-  sobrecargaCuidadosData?: StratifiedRow[]
-  empleoInformalData?: StratifiedRow[]
-  coberturaProgramaData?: StratifiedRow[]
-  controlesPrenatalData?: StratifiedRow[]
-  apoyoInfantilData?: StratifiedRow[]
-  stratifiers?: IndicatorStratifier[]
+  aprobacionData?: SimpleRow[]
+  reprobacionData?: SimpleRow[]
 }
 
 type PropsResolver = (
@@ -164,18 +157,10 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       }
     },
   },
-  traslado: {
-    component: StratifiedIndicator,
+  aprobacion: {
+    component: DSSIndicator,
     resolveProps: (
-      {
-        title,
-        text,
-        dimension,
-        subdimensions,
-        stratifiers,
-        trasladoData,
-        source,
-      },
+      { title, text, dimension, subdimensions, aprobacionData, source },
       baseUrl,
     ) => ({
       title,
@@ -183,30 +168,15 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       dimension,
       source,
       subdimensions: subdimensions ?? [],
-      stratifiers: stratifiers ?? [],
-      data: trasladoData ?? [],
-      yAxisLabel: '% mujeres embarazadas',
-      csvPath: base(baseUrl, 'journey_time.csv'),
-      geojsonUrls: Object.fromEntries(
-        STRATIFIED_YEARS.map((yr) => [
-          yr,
-          base(baseUrl, `mock_traslado_${yr}.geojson`),
-        ]),
-      ),
+      data: aprobacionData ?? [],
+      yAxisLabel: '%',
+      csvPath: base(baseUrl, 'education_aprobacion.csv'),
     }),
   },
-  'frecuencia-transporte': {
-    component: StratifiedIndicator,
+  reprobacion: {
+    component: DSSIndicator,
     resolveProps: (
-      {
-        title,
-        text,
-        dimension,
-        subdimensions,
-        stratifiers,
-        frecuenciaTransporteData,
-        source,
-      },
+      { title, text, dimension, subdimensions, reprobacionData, source },
       baseUrl,
     ) => ({
       title,
@@ -214,140 +184,9 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       dimension,
       source,
       subdimensions: subdimensions ?? [],
-      stratifiers: stratifiers ?? [],
-      data: frecuenciaTransporteData ?? [],
-      yAxisLabel: '% población con acceso',
-      csvPath: base(baseUrl, 'transport_frequency.csv'),
-      geojsonUrls: Object.fromEntries(
-        STRATIFIED_YEARS.map((yr) => [
-          yr,
-          base(baseUrl, `mock_transporte_${yr}.geojson`),
-        ]),
-      ),
-    }),
-  },
-  'sobrecarga-embarazadas': {
-    component: StratifiedIndicator,
-    resolveProps: (
-      {
-        title,
-        text,
-        dimension,
-        subdimensions,
-        stratifiers,
-        sobrecargaCuidadosData,
-        source,
-      },
-      baseUrl,
-    ) => ({
-      title,
-      text,
-      dimension,
-      source,
-      subdimensions: subdimensions ?? [],
-      stratifiers: stratifiers ?? [],
-      data: sobrecargaCuidadosData ?? [],
-      yAxisLabel: '% mujeres embarazadas',
-      csvPath: base(baseUrl, 'care_overload_municipal.csv'),
-      geojsonUrls: Object.fromEntries(
-        STRATIFIED_YEARS.map((yr) => [
-          yr,
-          base(baseUrl, `mock_sobrecarga_${yr}.geojson`),
-        ]),
-      ),
-    }),
-  },
-  'embarazadas-empleo-informal': {
-    component: StratifiedIndicator,
-    resolveProps: (
-      {
-        title,
-        text,
-        dimension,
-        subdimensions,
-        stratifiers,
-        empleoInformalData,
-        source,
-      },
-      baseUrl,
-    ) => ({
-      title,
-      text,
-      dimension,
-      source,
-      subdimensions: subdimensions ?? [],
-      stratifiers: stratifiers ?? [],
-      data: empleoInformalData ?? [],
-      yAxisLabel: '% personas con empleo informal',
-      csvPath: base(baseUrl, 'informal_employment.csv'),
-      geojsonUrls: Object.fromEntries(
-        STRATIFIED_YEARS.map((yr) => [
-          yr,
-          base(baseUrl, `mock_empleo_informal_${yr}.geojson`),
-        ]),
-      ),
-    }),
-  },
-  'apoyo-embarazadas': {
-    component: StratifiedIndicator,
-    resolveProps: (
-      {
-        title,
-        text,
-        dimension,
-        subdimensions,
-        stratifiers,
-        coberturaProgramaData,
-        source,
-      },
-      baseUrl,
-    ) => ({
-      title,
-      text,
-      dimension,
-      source,
-      subdimensions: subdimensions ?? [],
-      stratifiers: stratifiers ?? [],
-      data: coberturaProgramaData ?? [],
-      yAxisLabel: '% mujeres embarazadas',
-      csvPath: base(baseUrl, 'program_cover.csv'),
-      geojsonUrls: Object.fromEntries(
-        STRATIFIED_YEARS.map((yr) => [
-          yr,
-          base(baseUrl, `mock_cobertura_programa_${yr}.geojson`),
-        ]),
-      ),
-    }),
-  },
-  'apoyo-infantil': {
-    component: StratifiedIndicator,
-    resolveProps: (
-      {
-        title,
-        text,
-        dimension,
-        subdimensions,
-        stratifiers,
-        apoyoInfantilData,
-        source,
-      },
-      baseUrl,
-    ) => ({
-      title,
-      text,
-      dimension,
-      source,
-      subdimensions: subdimensions ?? [],
-      stratifiers: stratifiers ?? [],
-      data: apoyoInfantilData ?? [],
-      yAxisLabel: '% mujeres embarazadas',
-      csvPath: base(baseUrl, 'infant_care_support.csv'),
-      geojsonUrls: Object.fromEntries(
-        STRATIFIED_YEARS.map((yr) => [
-          yr,
-          base(baseUrl, `mock_cuidar_comunidad_${yr}.geojson`),
-        ]),
-      ),
+      data: reprobacionData ?? [],
+      yAxisLabel: '%',
+      csvPath: base(baseUrl, 'education_reprobacion.csv'),
     }),
   },
 }

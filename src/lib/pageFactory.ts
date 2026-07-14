@@ -5,10 +5,7 @@ import {
   filterForestPlotRows,
   filterAnalyticsSuicideRows,
   filterScatterSuicideRows,
-  filterJourneyTimeStratifiedRows,
-  filterSexoOnlyStratifiedRows,
-  filterZonaOnlyStratifiedRows,
-  filterEtniaStratifiedRows,
+  filterSimpleRows,
 } from './parquet'
 import { suicideMortalityIndicators } from '@/lib/indicators'
 import type { IndicatorStratifier } from '@/lib/indicators'
@@ -24,8 +21,8 @@ import type {
   AnalyticsSuicideRow,
   ScatterSuicideRawRow,
   ScatterSuicideRow,
-  StratifiedRawRow,
-  StratifiedRow,
+  SimpleRow,
+  SimpleRawRow,
 } from './parquet'
 
 // ─── Loaded datasets ─────────────────────────────────────────────────────────
@@ -35,12 +32,8 @@ export interface PageDatasets {
   analyticsSuicideData: AnalyticsSuicideRow[]
   scatterSuicideData: ScatterSuicideRow[]
   suicideMortalityRateData: SuicideMortalityRateRow[]
-  trasladoData: StratifiedRow[]
-  frecuenciaTransporteData: StratifiedRow[]
-  sobrecargaCuidadosData: StratifiedRow[]
-  empleoInformalData: StratifiedRow[]
-  coberturaProgramaData: StratifiedRow[]
-  apoyoInfantilData: StratifiedRow[]
+  aprobacionData: SimpleRow[]
+  reprobacionData: SimpleRow[]
 }
 
 export async function loadAllDatasets(): Promise<PageDatasets> {
@@ -84,64 +77,24 @@ export async function loadAllDatasets(): Promise<PageDatasets> {
     console.error('[loadAllDatasets] suicide_mortality:', e)
   }
 
-  let trasladoData: StratifiedRow[] = []
+  let aprobacionData: SimpleRow[] = []
   try {
-    const rows = await readParquet<StratifiedRawRow>(
-      dataPath('journey_time.parquet'),
+    const rows = await readParquet<SimpleRawRow>(
+      dataPath('education_aprobacion.parquet'),
     )
-    trasladoData = filterJourneyTimeStratifiedRows(rows)
+    aprobacionData = filterSimpleRows(rows)
   } catch (e) {
-    console.error('[loadAllDatasets] traslado:', e)
+    console.error('[loadAllDatasets] aprobacion:', e)
   }
 
-  let frecuenciaTransporteData: StratifiedRow[] = []
+  let reprobacionData: SimpleRow[] = []
   try {
-    const rows = await readParquet<StratifiedRawRow>(
-      dataPath('transport_frequency.parquet'),
+    const rows = await readParquet<SimpleRawRow>(
+      dataPath('education_reprobacion.parquet'),
     )
-    frecuenciaTransporteData = filterEtniaStratifiedRows(rows)
+    reprobacionData = filterSimpleRows(rows)
   } catch (e) {
-    console.error('[loadAllDatasets] frecuencia_transporte:', e)
-  }
-
-  let sobrecargaCuidadosData: StratifiedRow[] = []
-  try {
-    const rows = await readParquet<StratifiedRawRow>(
-      dataPath('care_overload_municipal.parquet'),
-    )
-    sobrecargaCuidadosData = filterEtniaStratifiedRows(rows)
-  } catch (e) {
-    console.error('[loadAllDatasets] sobrecarga_cuidados:', e)
-  }
-
-  let empleoInformalData: StratifiedRow[] = []
-  try {
-    const rows = await readParquet<StratifiedRawRow>(
-      dataPath('informal_employment.parquet'),
-    )
-    empleoInformalData = filterSexoOnlyStratifiedRows(rows)
-  } catch (e) {
-    console.error('[loadAllDatasets] empleo_informal:', e)
-  }
-
-  let coberturaProgramaData: StratifiedRow[] = []
-  try {
-    const rows = await readParquet<StratifiedRawRow>(
-      dataPath('program_cover.parquet'),
-    )
-    coberturaProgramaData = filterZonaOnlyStratifiedRows(rows)
-  } catch (e) {
-    console.error('[loadAllDatasets] cobertura_programa:', e)
-  }
-
-  let apoyoInfantilData: StratifiedRow[] = []
-  try {
-    const rows = await readParquet<StratifiedRawRow>(
-      dataPath('infant_care_support.parquet'),
-    )
-    apoyoInfantilData = filterEtniaStratifiedRows(rows)
-  } catch (e) {
-    console.error('[loadAllDatasets] apoyo_infantil:', e)
+    console.error('[loadAllDatasets] reprobacion:', e)
   }
 
   return {
@@ -149,12 +102,8 @@ export async function loadAllDatasets(): Promise<PageDatasets> {
     analyticsSuicideData,
     scatterSuicideData,
     suicideMortalityRateData,
-    trasladoData,
-    frecuenciaTransporteData,
-    sobrecargaCuidadosData,
-    empleoInformalData,
-    coberturaProgramaData,
-    apoyoInfantilData,
+    aprobacionData,
+    reprobacionData,
   }
 }
 
@@ -171,18 +120,14 @@ export interface PageDefinition {
   forestPlotData?: ForestPlotDataRow[]
   analyticsSuicideData?: AnalyticsSuicideRow[]
   scatterSuicideData?: ScatterSuicideRow[]
-  trasladoData?: StratifiedRow[]
-  frecuenciaTransporteData?: StratifiedRow[]
-  sobrecargaCuidadosData?: StratifiedRow[]
-  empleoInformalData?: StratifiedRow[]
-  coberturaProgramaData?: StratifiedRow[]
-  apoyoInfantilData?: StratifiedRow[]
   dimension?: string
   subdimensions?: string[]
   description?: string
   category?: string
   priority?: boolean
   stratifiers?: IndicatorStratifier[]
+  aprobacionData?: SimpleRow[]
+  reprobacionData?: SimpleRow[]
 }
 
 export function buildPages(datasets: PageDatasets): PageDefinition[] {
@@ -263,25 +208,12 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
       subdimensions: ind.subdimensions,
       date: ind.date,
       navbar: false,
-      stratifiers: ind.stratifiers,
       source: ind.source,
-      ...(ind.slug === 'traslado'
-        ? { trasladoData: datasets.trasladoData }
+      ...(ind.slug === 'aprobacion'
+        ? { aprobacionData: datasets.aprobacionData }
         : {}),
-      ...(ind.slug === 'frecuencia-transporte'
-        ? { frecuenciaTransporteData: datasets.frecuenciaTransporteData }
-        : {}),
-      ...(ind.slug === 'sobrecarga-embarazadas'
-        ? { sobrecargaCuidadosData: datasets.sobrecargaCuidadosData }
-        : {}),
-      ...(ind.slug === 'embarazadas-empleo-informal'
-        ? { empleoInformalData: datasets.empleoInformalData }
-        : {}),
-      ...(ind.slug === 'apoyo-embarazadas'
-        ? { coberturaProgramaData: datasets.coberturaProgramaData }
-        : {}),
-      ...(ind.slug === 'apoyo-infantil'
-        ? { apoyoInfantilData: datasets.apoyoInfantilData }
+      ...(ind.slug === 'reprobacion'
+        ? { reprobacionData: datasets.reprobacionData }
         : {}),
     }),
   )

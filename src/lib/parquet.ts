@@ -502,3 +502,22 @@ export function filterForestPlotRows(
   }
   return result
 }
+
+export type SimpleRawRow = unknown[]
+
+/** Unified row type — legacy fields (sexo, grupo_edad) are optional. */
+export type SimpleRow = {
+  anio: number
+  valor: number
+}
+
+export function filterSimpleRows(rows: SimpleRawRow[]): SimpleRow[] {
+  const result: SimpleRow[] = []
+  for (const row of rows) {
+    const anio = Number(row[0])
+    const valor = Number(row[2])
+    if (!Number.isFinite(anio) || !Number.isFinite(valor)) continue
+    result.push({ anio, valor })
+  }
+  return result.sort((a, b) => a.anio - b.anio)
+}

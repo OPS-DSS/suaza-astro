@@ -1,18 +1,15 @@
 ---
-import { StratifiedLineChart } from './StratifiedLineChart'
-import type { StratifiedRow } from '@/lib/parquet'
-import type { IndicatorStratifier } from '@/lib/indicators'
+import { DSSLineChart } from './DSSLineChart'
+import type { SimpleRow } from '@/lib/parquet'
 
 interface Props {
   title: string
   dimension: string
   subdimensions: string[]
   text: string
-  data: StratifiedRow[]
-  stratifiers?: IndicatorStratifier[]
+  data: SimpleRow[]
   yAxisLabel?: string
   csvPath?: string
-  geojsonUrls?: Record<number, string>
   source: string
 }
 
@@ -22,10 +19,8 @@ const {
   subdimensions = [],
   text,
   data,
-  stratifiers,
   yAxisLabel,
   csvPath,
-  geojsonUrls,
   source,
 } = Astro.props
 ---
@@ -55,13 +50,11 @@ const {
     <h1 class="text-3xl font-bold mb-6">{title}</h1>
     <p class="text-gray-700">{text}</p>
 
-    <StratifiedLineChart
+    <DSSLineChart
       client:only="react"
       data={data}
-      stratifiers={stratifiers}
       yAxisLabel={yAxisLabel}
       csvPath={csvPath}
-      geojsonUrls={geojsonUrls}
     />
 
     <p class="text-sm text-gray-600">Fuente: {source}</p>
