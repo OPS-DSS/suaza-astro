@@ -1,29 +1,29 @@
 import {
   readParquet,
   dataPath,
-  filterMaternalMortalityRateRows,
+  filterSuicideMortalityRateRows,
   filterForestPlotRows,
-  filterAnalyticsMaternalRows,
-  filterScatterMaternalRows,
+  filterAnalyticsSuicideRows,
+  filterScatterSuicideRows,
   filterJourneyTimeStratifiedRows,
   filterSexoOnlyStratifiedRows,
   filterZonaOnlyStratifiedRows,
   filterEtniaStratifiedRows,
 } from './parquet'
-import { maternalMortalityIndicators } from '@/lib/indicators'
+import { suicideMortalityIndicators } from '@/lib/indicators'
 import type { IndicatorStratifier } from '@/lib/indicators'
 import { priorities } from '@/lib/priority'
 import type { PriorityMeta } from '@/lib/priority'
 
 import type {
-  MaternalMortalityRateRawRow,
-  MaternalMortalityRateRow,
+  SuicideMortalityRateRawRow,
+  SuicideMortalityRateRow,
   ForestPlotRawRow,
   ForestPlotDataRow,
-  AnalyticsMaternalRawRow,
-  AnalyticsMaternalRow,
-  ScatterMaternalRawRow,
-  ScatterMaternalRow,
+  AnalyticsSuicideRawRow,
+  AnalyticsSuicideRow,
+  ScatterSuicideRawRow,
+  ScatterSuicideRow,
   StratifiedRawRow,
   StratifiedRow,
 } from './parquet'
@@ -32,9 +32,9 @@ import type {
 
 export interface PageDatasets {
   forestPlotData: ForestPlotDataRow[]
-  analyticsMaternalData: AnalyticsMaternalRow[]
-  scatterMaternalData: ScatterMaternalRow[]
-  maternalMortalityRateData: MaternalMortalityRateRow[]
+  analyticsSuicideData: AnalyticsSuicideRow[]
+  scatterSuicideData: ScatterSuicideRow[]
+  suicideMortalityRateData: SuicideMortalityRateRow[]
   trasladoData: StratifiedRow[]
   frecuenciaTransporteData: StratifiedRow[]
   sobrecargaCuidadosData: StratifiedRow[]
@@ -54,34 +54,34 @@ export async function loadAllDatasets(): Promise<PageDatasets> {
     console.error('[loadAllDatasets] mock_forest_plot:', e)
   }
 
-  let analyticsMaternalData: AnalyticsMaternalRow[] = []
+  let analyticsSuicideData: AnalyticsSuicideRow[] = []
   try {
-    const rows = await readParquet<AnalyticsMaternalRawRow>(
+    const rows = await readParquet<AnalyticsSuicideRawRow>(
       dataPath('mock_analytics_maternal.parquet'),
     )
-    analyticsMaternalData = filterAnalyticsMaternalRows(rows)
+    analyticsSuicideData = filterAnalyticsSuicideRows(rows)
   } catch (e) {
     console.error('[loadAllDatasets] mock_analytics_maternal:', e)
   }
 
-  let scatterMaternalData: ScatterMaternalRow[] = []
+  let scatterSuicideData: ScatterSuicideRow[] = []
   try {
-    const rows = await readParquet<ScatterMaternalRawRow>(
+    const rows = await readParquet<ScatterSuicideRawRow>(
       dataPath('mock_scatter_maternal.parquet'),
     )
-    scatterMaternalData = filterScatterMaternalRows(rows)
+    scatterSuicideData = filterScatterSuicideRows(rows)
   } catch (e) {
     console.error('[loadAllDatasets] mock_scatter_maternal:', e)
   }
 
-  let maternalMortalityRateData: MaternalMortalityRateRow[] = []
+  let suicideMortalityRateData: SuicideMortalityRateRow[] = []
   try {
-    const rows = await readParquet<MaternalMortalityRateRawRow>(
-      dataPath('maternal_mortality_rate.parquet'),
+    const rows = await readParquet<SuicideMortalityRateRawRow>(
+      dataPath('suicide_mortality.parquet'),
     )
-    maternalMortalityRateData = filterMaternalMortalityRateRows(rows)
+    suicideMortalityRateData = filterSuicideMortalityRateRows(rows)
   } catch (e) {
-    console.error('[loadAllDatasets] maternal_mortality_rate:', e)
+    console.error('[loadAllDatasets] suicide_mortality:', e)
   }
 
   let trasladoData: StratifiedRow[] = []
@@ -146,9 +146,9 @@ export async function loadAllDatasets(): Promise<PageDatasets> {
 
   return {
     forestPlotData,
-    analyticsMaternalData,
-    scatterMaternalData,
-    maternalMortalityRateData,
+    analyticsSuicideData,
+    scatterSuicideData,
+    suicideMortalityRateData,
     trasladoData,
     frecuenciaTransporteData,
     sobrecargaCuidadosData,
@@ -167,10 +167,10 @@ export interface PageDefinition {
   date: string
   navbar: boolean
   source?: string
-  data?: MaternalMortalityRateRow[]
+  data?: SuicideMortalityRateRow[]
   forestPlotData?: ForestPlotDataRow[]
-  analyticsMaternalData?: AnalyticsMaternalRow[]
-  scatterMaternalData?: ScatterMaternalRow[]
+  analyticsSuicideData?: AnalyticsSuicideRow[]
+  scatterSuicideData?: ScatterSuicideRow[]
   trasladoData?: StratifiedRow[]
   frecuenciaTransporteData?: StratifiedRow[]
   sobrecargaCuidadosData?: StratifiedRow[]
@@ -225,8 +225,8 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
       navbar: false,
       priority: false,
       forestPlotData: datasets.forestPlotData,
-      analyticsMaternalData: datasets.analyticsMaternalData,
-      scatterMaternalData: datasets.scatterMaternalData,
+      analyticsSuicideData: datasets.analyticsSuicideData,
+      scatterSuicideData: datasets.scatterSuicideData,
     },
   ]
 
@@ -240,7 +240,7 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
         category: priority.category,
         source: priority.source,
         navbar: false,
-        data: datasets.maternalMortalityRateData,
+        data: datasets.suicideMortalityRateData,
       },
       {
         slug: `determinantes-de-la-salud/${priority.slug}`,
@@ -254,7 +254,7 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
     ],
   )
 
-  const indicatorPages: PageDefinition[] = maternalMortalityIndicators.map(
+  const indicatorPages: PageDefinition[] = suicideMortalityIndicators.map(
     (ind) => ({
       slug: ind.slug,
       title: ind.title,

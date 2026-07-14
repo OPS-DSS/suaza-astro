@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { DSGapBarChart } from '@ops-dss/charts/gap-bar-chart'
-import type { MaternalMortalityRateRow } from '@/lib/parquet'
+import type { SuicideMortalityRateRow } from '@/lib/parquet'
 
 const SMV = 'San Martín del Valle'
 const TOTAL_ZONA = 'Total'
@@ -24,7 +24,7 @@ function r(v: number, d: number) {
   return Math.round(v * f) / f
 }
 
-function computeGaps(data: MaternalMortalityRateRow[]): GapRow[] {
+function computeGaps(data: SuicideMortalityRateRow[]): GapRow[] {
   const smvRows = data.filter(
     (row) => row.territorio === SMV && row.zona === TOTAL_ZONA,
   )
@@ -33,7 +33,8 @@ function computeGaps(data: MaternalMortalityRateRow[]): GapRow[] {
 
   for (const row of smvRows) {
     if (row.etnia === 'Indígena') indigenaByYear.set(row.anio, row.valor)
-    else if (row.etnia === 'No indígena') noIndigenaByYear.set(row.anio, row.valor)
+    else if (row.etnia === 'No indígena')
+      noIndigenaByYear.set(row.anio, row.valor)
   }
 
   const years = [
@@ -44,7 +45,11 @@ function computeGaps(data: MaternalMortalityRateRow[]): GapRow[] {
     .map((anio) => {
       const rmm_indigena = indigenaByYear.get(anio) ?? NaN
       const rmm_no_indigena = noIndigenaByYear.get(anio) ?? NaN
-      if (!Number.isFinite(rmm_indigena) || !Number.isFinite(rmm_no_indigena) || rmm_no_indigena <= 0)
+      if (
+        !Number.isFinite(rmm_indigena) ||
+        !Number.isFinite(rmm_no_indigena) ||
+        rmm_no_indigena <= 0
+      )
         return null
       const brecha_absoluta = r(rmm_indigena - rmm_no_indigena, 1)
       const brecha_relativa = r(rmm_indigena / rmm_no_indigena, 2)
@@ -91,7 +96,14 @@ function downloadCsvBA(rows: GapRow[], filename = 'brecha-absoluta') {
     'ic_sup_ba',
   ].join(',')
   const lines = rows.map((r) =>
-    [r.anio, r.rmm_indigena, r.rmm_no_indigena, r.brecha_absoluta, r.ic_inf_ba, r.ic_sup_ba].join(','),
+    [
+      r.anio,
+      r.rmm_indigena,
+      r.rmm_no_indigena,
+      r.brecha_absoluta,
+      r.ic_inf_ba,
+      r.ic_sup_ba,
+    ].join(','),
   )
   triggerDownload([header, ...lines].join('\n'), filename)
 }
@@ -106,7 +118,14 @@ function downloadCsvBR(rows: GapRow[], filename = 'brecha-relativa') {
     'ic_sup_br',
   ].join(',')
   const lines = rows.map((r) =>
-    [r.anio, r.rmm_indigena, r.rmm_no_indigena, r.brecha_relativa, r.ic_inf_br, r.ic_sup_br].join(','),
+    [
+      r.anio,
+      r.rmm_indigena,
+      r.rmm_no_indigena,
+      r.brecha_relativa,
+      r.ic_inf_br,
+      r.ic_sup_br,
+    ].join(','),
   )
   triggerDownload([header, ...lines].join('\n'), filename)
 }
@@ -179,11 +198,11 @@ function ViewToggle({
 // ── Component ─────────────────────────────────────────────────────────────────
 
 interface Props {
-  data: MaternalMortalityRateRow[]
+  data: SuicideMortalityRateRow[]
   selectedYear?: number | null
 }
 
-export const MaternalMortalityEthnicGapsChart = ({
+export const SuicideMortalityEthnicGapsChart = ({
   data,
   selectedYear,
 }: Props) => {
@@ -192,7 +211,9 @@ export const MaternalMortalityEthnicGapsChart = ({
   const [viewBA, setViewBA] = useState<ViewMode>('chart')
   const [viewBR, setViewBR] = useState<ViewMode>('chart')
 
-  const effectiveYear = selectedYear ?? (gapsData.length > 0 ? gapsData[gapsData.length - 1].anio : null)
+  const effectiveYear =
+    selectedYear ??
+    (gapsData.length > 0 ? gapsData[gapsData.length - 1].anio : null)
 
   const selectedRow = useMemo(
     () => gapsData.find((r) => r.anio === effectiveYear) ?? null,
@@ -223,16 +244,21 @@ export const MaternalMortalityEthnicGapsChart = ({
 
   return (
     <div className="flex flex-col gap-8">
-
       {/* ── Brecha Absoluta ───────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-3">
             <span className="inline-block w-3 h-3 rounded-sm bg-purple-500" />
-            <h3 className="text-sm font-semibold text-gray-700">Brecha absoluta (muertes por 100.000 NV)</h3>
+            <h3 className="text-sm font-semibold text-gray-700">
+              Brecha absoluta (muertes por 100.000 NV)
+            </h3>
           </div>
           <div className="flex items-center gap-2">
-            <ViewToggle view={viewBA} onChange={setViewBA} sectionLabel="brecha absoluta" />
+            <ViewToggle
+              view={viewBA}
+              onChange={setViewBA}
+              sectionLabel="brecha absoluta"
+            />
             <button
               type="button"
               onClick={() => downloadCsvBA(gapsData)}
@@ -277,10 +303,18 @@ export const MaternalMortalityEthnicGapsChart = ({
                         : 'bg-white hover:bg-gray-50'
                     }`}
                   >
-                    <td className="px-4 py-3 font-medium text-gray-900">{row.anio}</td>
-                    <td className="px-4 py-3 text-gray-600">{row.rmm_indigena.toFixed(1)}</td>
-                    <td className="px-4 py-3 text-gray-600">{row.rmm_no_indigena.toFixed(1)}</td>
-                    <td className="px-4 py-3 text-gray-600">{row.brecha_absoluta.toFixed(1)}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900">
+                      {row.anio}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {row.rmm_indigena.toFixed(1)}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {row.rmm_no_indigena.toFixed(1)}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {row.brecha_absoluta.toFixed(1)}
+                    </td>
                     <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
                       ({row.ic_inf_ba.toFixed(1)} – {row.ic_sup_ba.toFixed(1)})
                     </td>
@@ -300,7 +334,8 @@ export const MaternalMortalityEthnicGapsChart = ({
               {selectedRow.brecha_absoluta.toFixed(1)}
             </p>
             <p className="text-xs text-gray-500 mb-3">
-              IC 95%: ({selectedRow.ic_inf_ba.toFixed(1)} – {selectedRow.ic_sup_ba.toFixed(1)}) muertes por 100.000 NV
+              IC 95%: ({selectedRow.ic_inf_ba.toFixed(1)} –{' '}
+              {selectedRow.ic_sup_ba.toFixed(1)}) muertes por 100.000 NV
             </p>
             <p className="text-sm text-gray-700 leading-relaxed">
               {interpretacionBA(selectedRow.brecha_absoluta)}
@@ -314,10 +349,16 @@ export const MaternalMortalityEthnicGapsChart = ({
         <div className="flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-3">
             <span className="inline-block w-3 h-3 rounded-sm bg-cyan-500" />
-            <h3 className="text-sm font-semibold text-gray-700">Brecha relativa (razón)</h3>
+            <h3 className="text-sm font-semibold text-gray-700">
+              Brecha relativa (razón)
+            </h3>
           </div>
           <div className="flex items-center gap-2">
-            <ViewToggle view={viewBR} onChange={setViewBR} sectionLabel="brecha relativa" />
+            <ViewToggle
+              view={viewBR}
+              onChange={setViewBR}
+              sectionLabel="brecha relativa"
+            />
             <button
               type="button"
               onClick={() => downloadCsvBR(gapsData)}
@@ -363,10 +404,18 @@ export const MaternalMortalityEthnicGapsChart = ({
                         : 'bg-white hover:bg-gray-50'
                     }`}
                   >
-                    <td className="px-4 py-3 font-medium text-gray-900">{row.anio}</td>
-                    <td className="px-4 py-3 text-gray-600">{row.rmm_indigena.toFixed(1)}</td>
-                    <td className="px-4 py-3 text-gray-600">{row.rmm_no_indigena.toFixed(1)}</td>
-                    <td className="px-4 py-3 text-gray-600">{row.brecha_relativa.toFixed(2)}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900">
+                      {row.anio}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {row.rmm_indigena.toFixed(1)}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {row.rmm_no_indigena.toFixed(1)}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {row.brecha_relativa.toFixed(2)}
+                    </td>
                     <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
                       ({row.ic_inf_br.toFixed(2)} – {row.ic_sup_br.toFixed(2)})
                     </td>
@@ -386,7 +435,8 @@ export const MaternalMortalityEthnicGapsChart = ({
               {selectedRow.brecha_relativa.toFixed(2)}
             </p>
             <p className="text-xs text-gray-500 mb-3">
-              IC 95%: ({selectedRow.ic_inf_br.toFixed(2)} – {selectedRow.ic_sup_br.toFixed(2)})
+              IC 95%: ({selectedRow.ic_inf_br.toFixed(2)} –{' '}
+              {selectedRow.ic_sup_br.toFixed(2)})
             </p>
             <p className="text-sm text-gray-700 leading-relaxed">
               {interpretacionBR(selectedRow.brecha_relativa)}
@@ -394,7 +444,6 @@ export const MaternalMortalityEthnicGapsChart = ({
           </div>
         )}
       </div>
-
     </div>
   )
 }

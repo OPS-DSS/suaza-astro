@@ -1,30 +1,23 @@
 import { useState, useMemo } from 'react'
 import { DSLineChart } from '@ops-dss/charts/line-chart'
-import type { MaternalMortalityRateRow } from '@/lib/parquet'
+import type { SuicideMortalityRateRow } from '@/lib/parquet'
 import { ExpandablePanel } from '@/components/ExpandablePanel'
 
 // ── Aggregate label constants (must match R mock script) ──────────────────────
-const TOTAL_ETNIA = 'Total'
-const TOTAL_ZONA = 'Total'
-const SMV = 'San Martín del Valle'
+const TOTAL_SEXO = 'Total'
+const SMV = 'Suaza'
 
 // ── Stratifier type ───────────────────────────────────────────────────────────
-export type Stratifier = 'total' | 'etnia' | 'zona'
+export type Stratifier = 'total' | 'sexo'
 
 // ── Colour palettes ───────────────────────────────────────────────────────────
-const ETNIA_COLORS: Record<string, string> = {
-  'Indígena': '#8b5cf6',
-  'No indígena': '#06b6d4',
-}
-const ZONA_COLORS: Record<string, string> = {
-  urbano: '#22c55e',
-  periurbano: '#f59e0b',
-  rural: '#ef4444',
+const SEXO_COLORS: Record<string, string> = {
+  Femenino: '#8b5cf6',
+  Masculino: '#06b6d4',
 }
 
 // Explicit ordering for consistent legend/table display across renders
-const ZONA_ORDER = ['urbano', 'periurbano', 'rural']
-const ETNIA_ORDER = ['Indígena', 'No indígena']
+const SEXO_ORDER = ['Femenino', 'Masculino']
 const TOTAL_COLOR = '#6b7280'
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
@@ -48,36 +41,23 @@ const DownloadIcon = () => (
 
 // ── Data pivot ────────────────────────────────────────────────────────────────
 
-function pivotData(rows: MaternalMortalityRateRow[], stratifier: Stratifier) {
+function pivotData(rows: SuicideMortalityRateRow[], stratifier: Stratifier) {
   // Only municipality-level aggregates
   const smvRows = rows.filter((r) => r.territorio === SMV)
 
-  let filtered: MaternalMortalityRateRow[]
+  let filtered: SuicideMortalityRateRow[]
 
   if (stratifier === 'total') {
-    filtered = smvRows.filter(
-      (r) => r.etnia === TOTAL_ETNIA && r.zona === TOTAL_ZONA,
-    )
-  } else if (stratifier === 'etnia') {
-    filtered = smvRows.filter(
-      (r) => r.zona === TOTAL_ZONA && r.etnia !== TOTAL_ETNIA,
-    )
+    filtered = smvRows.filter((r) => r.sexo === TOTAL_SEXO)
   } else {
-    filtered = smvRows.filter(
-      (r) => r.etnia === TOTAL_ETNIA && r.zona !== TOTAL_ZONA,
-    )
+    filtered = smvRows.filter((r) => r.sexo !== TOTAL_SEXO)
   }
 
   const byYear = new Map<number, Record<string, number>>()
   const keySet = new Set<string>()
 
   for (const row of filtered) {
-    const key =
-      stratifier === 'total'
-        ? SMV
-        : stratifier === 'etnia'
-          ? row.etnia
-          : row.zona
+    const key = stratifier === 'total' ? SMV : row.sexo
 
     keySet.add(key)
     if (!byYear.has(row.anio)) byYear.set(row.anio, {})
@@ -88,12 +68,7 @@ function pivotData(rows: MaternalMortalityRateRow[], stratifier: Stratifier) {
     .sort(([a], [b]) => a - b)
     .map(([anio, vals]) => ({ anio, ...vals }))
 
-  const orderArray =
-    stratifier === 'zona'
-      ? ZONA_ORDER
-      : stratifier === 'etnia'
-        ? ETNIA_ORDER
-        : null
+  const orderArray = stratifier === 'sexo' ? SEXO_ORDER : null
 
   const keys = Array.from(keySet).sort((a, b) => {
     if (orderArray) return orderArray.indexOf(a) - orderArray.indexOf(b)
@@ -104,11 +79,7 @@ function pivotData(rows: MaternalMortalityRateRow[], stratifier: Stratifier) {
     dataKey: key,
     name: key,
     color:
-      stratifier === 'total'
-        ? TOTAL_COLOR
-        : stratifier === 'zona'
-          ? (ZONA_COLORS[key] ?? '#6b7280')
-          : (ETNIA_COLORS[key] ?? '#6b7280'),
+      stratifier === 'total' ? TOTAL_COLOR : (SEXO_COLORS[key] ?? '#6b7280'),
   }))
 
   return { chartData, lines, keys }
@@ -116,8 +87,8 @@ function pivotData(rows: MaternalMortalityRateRow[], stratifier: Stratifier) {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-interface MaternalMortalityChartProps {
-  data: MaternalMortalityRateRow[]
+interface SuicideMortalityChartProps {
+  data: SuicideMortalityRateRow[]
   csvPath?: string
   highlightYear?: number
   stratifier: Stratifier
@@ -126,17 +97,16 @@ interface MaternalMortalityChartProps {
 
 const STRATIFIER_OPTIONS: { value: Stratifier; label: string }[] = [
   { value: 'total', label: 'Total' },
-  { value: 'etnia', label: 'Etnia' },
-  { value: 'zona', label: 'Zona' },
+  { value: 'sexo', label: 'Sexo' },
 ]
 
-export const MaternalMortalityChart = ({
+export const SuicideMortalityChart = ({
   data,
   csvPath,
   highlightYear,
   stratifier,
   onStratifierChange: setStratifier,
-}: MaternalMortalityChartProps) => {
+}: SuicideMortalityChartProps) => {
   const [view, setView] = useState<'chart' | 'table'>('chart')
 
   const { chartData, lines, keys } = useMemo(
@@ -223,7 +193,9 @@ export const MaternalMortalityChart = ({
                 data={chartData}
                 xAxisKey="anio"
                 lines={lines}
-                height={isFullscreen ? Math.max(300, window.innerHeight - 200) : 400}
+                height={
+                  isFullscreen ? Math.max(300, window.innerHeight - 200) : 400
+                }
                 xAxisLabel="Año"
                 yAxisLabel="Tasa (×100.000 NV)"
                 yAxisDomain={[0, 100]}

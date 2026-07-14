@@ -2,13 +2,13 @@ import { useState, useMemo } from 'react'
 import { DSQuintilBarChart } from '@ops-dss/charts/quintil-bar-chart'
 import { DSCILineChart } from '@ops-dss/charts/ci-line-chart'
 import type {
-  MaternalMortalityQuintilRow,
-  MaternalMortalityGapsRow,
+  SuicideMortalityQuintilRow,
+  SuicideMortalityGapsRow,
 } from '@/lib/parquet'
 
-interface MaternalMortalityGapsChartProps {
-  quintilData: MaternalMortalityQuintilRow[]
-  gapsData: MaternalMortalityGapsRow[]
+interface SuicideMortalityGapsChartProps {
+  quintilData: SuicideMortalityQuintilRow[]
+  gapsData: SuicideMortalityGapsRow[]
   metric: 'brecha_absoluta' | 'brecha_relativa'
   onMetricChange: (m: 'brecha_absoluta' | 'brecha_relativa') => void
   quintilCsvPath?: string
@@ -105,19 +105,22 @@ const MetricToggle = ({
 
 // ── Main component ─────────────────────────────────────────────────────────────
 
-export const MaternalMortalityGapsChart = ({
+export const SuicideMortalityGapsChart = ({
   quintilData,
   gapsData,
   metric,
   onMetricChange,
   quintilCsvPath,
   gapsCsvPath,
-}: MaternalMortalityGapsChartProps) => {
+}: SuicideMortalityGapsChartProps) => {
   const [quintilView, setQuintilView] = useState<ViewMode>('chart')
   const [gapsView, setGapsView] = useState<ViewMode>('chart')
   // Latest year for the quintil bar chart
   const lastYear = useMemo(
-    () => (quintilData.length > 0 ? Math.max(...quintilData.map((r) => r.anio)) : null),
+    () =>
+      quintilData.length > 0
+        ? Math.max(...quintilData.map((r) => r.anio))
+        : null,
     [quintilData],
   )
 
@@ -156,7 +159,7 @@ export const MaternalMortalityGapsChart = ({
       <div>
         <div className="py-4">
           <h2 className="text-xl font-bold">
-            Tasa de mortalidad materna por quintil de deserción escolar
+            Tasa de mortalidad por suicidio por quintil de deserción escolar
           </h2>
           {lastYear !== null && (
             <p className="text-sm text-gray-500 mt-1">
@@ -210,10 +213,14 @@ export const MaternalMortalityGapsChart = ({
                       {row.tasa_ponderada.toFixed(2)}
                     </td>
                     <td className="px-4 py-3 text-gray-600">
-                      {Number.isFinite(row.ic_inf) ? row.ic_inf.toFixed(2) : '—'}
+                      {Number.isFinite(row.ic_inf)
+                        ? row.ic_inf.toFixed(2)
+                        : '—'}
                     </td>
                     <td className="px-4 py-3 text-gray-600">
-                      {Number.isFinite(row.ic_sup) ? row.ic_sup.toFixed(2) : '—'}
+                      {Number.isFinite(row.ic_sup)
+                        ? row.ic_sup.toFixed(2)
+                        : '—'}
                     </td>
                   </tr>
                 ))}
@@ -315,4 +322,3 @@ export const MaternalMortalityGapsChart = ({
     </div>
   )
 }
-

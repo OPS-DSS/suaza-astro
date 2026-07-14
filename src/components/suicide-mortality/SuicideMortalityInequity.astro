@@ -1,11 +1,11 @@
 ---
-import { MaternalMortalityPanel } from './MaternalMortalityPanel'
-import type { MaternalMortalityRateRow } from '@/lib/parquet'
+import { SuicideMortalityPanel } from './SuicideMortalityPanel'
+import type { SuicideMortalityRateRow } from '@/lib/parquet'
 
 interface Props {
   title: string
   text: string
-  data: MaternalMortalityRateRow[] | undefined
+  data: SuicideMortalityRateRow[] | undefined
   csvPath?: string
   source: string
 }
@@ -19,7 +19,7 @@ const { title, text, data, csvPath, source } = Astro.props
     <p class="text-gray-700">{text}</p>
     {
       data && (
-        <MaternalMortalityPanel data={data} csvPath={csvPath} client:load />
+        <SuicideMortalityPanel data={data} csvPath={csvPath} client:load />
       )
     }
     <hr class="my-4" />

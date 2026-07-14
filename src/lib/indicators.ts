@@ -18,7 +18,7 @@ export type IndicatorMeta = {
   source: string
 }
 
-export const maternalMortalityIndicators: IndicatorMeta[] = [
+export const suicideMortalityIndicators: IndicatorMeta[] = [
   {
     slug: 'traslado',
     title:

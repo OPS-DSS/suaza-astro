@@ -1,29 +1,26 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { MaternalMortalityChart } from './MaternalMortalityChart'
-import type { Stratifier } from './MaternalMortalityChart'
-import { MaternalMortalityEthnicGapsChart } from './MaternalMortalityEthnicGapsChart'
-import { MaternalMortalityZoneGapsChart } from './MaternalMortalityZoneGapsChart'
-import type { MaternalMortalityRateRow } from '@/lib/parquet'
+import { SuicideMortalityChart } from './SuicideMortalityChart'
+import type { Stratifier } from './SuicideMortalityChart'
+import { SuicideMortalityEthnicGapsChart } from './SuicideMortalityEthnicGapsChart'
+import type { SuicideMortalityRateRow } from '@/lib/parquet'
 
-const SMV = 'San Martín del Valle'
-const TOTAL_ZONA = 'Total'
-const TOTAL_ETNIA = 'Total'
+const SMV = 'Suaza'
+const TOTAL_SEXO = 'Total'
 
-interface MaternalMortalityPanelProps {
-  data: MaternalMortalityRateRow[]
+interface SuicideMortalityPanelProps {
+  data: SuicideMortalityRateRow[]
   csvPath?: string
 }
 
-export const MaternalMortalityPanel = ({
+export const SuicideMortalityPanel = ({
   data,
   csvPath,
-}: MaternalMortalityPanelProps) => {
+}: SuicideMortalityPanelProps) => {
   const availableYears = useMemo(() => {
     const smvRows = data.filter(
-      (r) =>
-        r.territorio === SMV && r.zona === TOTAL_ZONA && r.etnia === TOTAL_ETNIA,
+      (r) => r.territorio === SMV && r.sexo === TOTAL_SEXO,
     )
     return [...new Set(smvRows.map((r) => r.anio))].sort((a, b) => b - a)
   }, [data])
@@ -59,7 +56,7 @@ export const MaternalMortalityPanel = ({
       )}
 
       {/* ── Temporal trend chart ───────────────────────────────────────────────── */}
-      <MaternalMortalityChart
+      <SuicideMortalityChart
         data={data}
         csvPath={csvPath}
         highlightYear={effectiveYear ?? undefined}
@@ -67,35 +64,18 @@ export const MaternalMortalityPanel = ({
         onStratifierChange={setStratifier}
       />
 
-      {/* ── Gaps analysis chart ────────────────────────────────────────────────── */}
-      {stratifier === 'etnia' && (
+      {/* ── Gender analysis chart ────────────────────────────────────────────────── */}
+      {stratifier === 'sexo' && (
         <section className="flex flex-col gap-4">
           <div>
             <h2 className="text-xl font-bold">
-              Análisis de brechas étnicas en mortalidad materna
+              Análisis de brechas de género en mortalidad por suicidio
             </h2>
             <p className="text-sm text-gray-500 mt-1">
-              Brecha absoluta y relativa entre población indígena y no indígena.
+              Brecha absoluta y relativa entre población femenina y masculina.
             </p>
           </div>
-          <MaternalMortalityEthnicGapsChart
-            data={data}
-            selectedYear={effectiveYear}
-          />
-        </section>
-      )}
-
-      {stratifier === 'zona' && (
-        <section className="flex flex-col gap-4">
-          <div>
-            <h2 className="text-xl font-bold">
-              Análisis de brechas territoriales en mortalidad materna
-            </h2>
-            <p className="text-sm text-gray-500 mt-1">
-              Brecha absoluta y relativa entre zonas geográficas.
-            </p>
-          </div>
-          <MaternalMortalityZoneGapsChart
+          <SuicideMortalityEthnicGapsChart
             data={data}
             selectedYear={effectiveYear}
           />

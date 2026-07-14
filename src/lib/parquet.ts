@@ -100,46 +100,44 @@ export async function readParquetAsObjects<T = Record<string, unknown>>(
   })
 }
 
-// ── Maternal Mortality data types ─────────────────────────────────────────────
+// ── Suicide Mortality data types ─────────────────────────────────────────────
 
 /**
- * Row from maternal_mortality_rate.parquet (mock SMV data)
+ * Row from suicide_mortality_rate.parquet (mock SMV data)
  * Columns (by index): iso3[0], Territorio[1], cod_local[2], anio[3], sexo[4], zona[5], etnia[6], valor[7]
  */
-export type MaternalMortalityRateRawRow = unknown[]
+export type SuicideMortalityRateRawRow = unknown[]
 
-export type MaternalMortalityRateRow = {
+export type SuicideMortalityRateRow = {
   territorio: string
   anio: number
-  etnia: string
-  zona: string
+  sexo: string
   valor: number
 }
 
-export function filterMaternalMortalityRateRows(
-  rows: MaternalMortalityRateRawRow[],
-): MaternalMortalityRateRow[] {
-  const result: MaternalMortalityRateRow[] = []
+export function filterSuicideMortalityRateRows(
+  rows: SuicideMortalityRateRawRow[],
+): SuicideMortalityRateRow[] {
+  const result: SuicideMortalityRateRow[] = []
   for (const row of rows) {
     const territorio = String(row[1])
-    const anio = Number(row[3])
-    const zona = String(row[5])
-    const etnia = String(row[6])
-    const valor = Number(row[7])
+    const anio = Number(row[4])
+    const sexo = String(row[5])
+    const valor = Number(row[6])
     if (!Number.isFinite(anio) || !Number.isFinite(valor)) continue
-    result.push({ territorio, anio, etnia, zona, valor })
+    result.push({ territorio, anio, sexo, valor })
   }
-  return result.sort((a, b) => a.anio - b.anio)
+  return result.sort((a, b) => a.anio - b.anio).filter((r) => r.anio > 2016)
 }
 
 /**
- * Row from maternal_mortality_quintiles.parquet (resumen dataframe)
+ * Row from suicide_mortality_quintiles.parquet (resumen dataframe)
  * Columns: anio[0], quintil_dss[1], tasa_ponderada[2], n[3], total_pob[4],
  *          sd_pond[5], se[6], ic_inf[7], ic_sup[8]
  */
-export type MaternalMortalityQuintilRawRow = unknown[]
+export type SuicideMortalityQuintilRawRow = unknown[]
 
-export type MaternalMortalityQuintilRow = {
+export type SuicideMortalityQuintilRow = {
   anio: number
   quintil_dss: number
   tasa_ponderada: number
@@ -150,10 +148,10 @@ export type MaternalMortalityQuintilRow = {
   ic_sup: number
 }
 
-export function filterMaternalMortalityQuintilRows(
-  rows: MaternalMortalityQuintilRawRow[],
-): MaternalMortalityQuintilRow[] {
-  const result: MaternalMortalityQuintilRow[] = []
+export function filterSuicideMortalityQuintilRows(
+  rows: SuicideMortalityQuintilRawRow[],
+): SuicideMortalityQuintilRow[] {
+  const result: SuicideMortalityQuintilRow[] = []
   for (const row of rows) {
     const anio = Number(row[0])
     const quintil_dss = Number(row[1])
@@ -184,9 +182,9 @@ export function filterMaternalMortalityQuintilRows(
  *          brecha_absoluta[3], ic_inf_abs[4], ic_sup_abs[5],
  *          brecha_relativa[6], ic_inf_rel[7], ic_sup_rel[8]
  */
-export type MaternalMortalityGapsRawRow = unknown[]
+export type SuicideMortalityGapsRawRow = unknown[]
 
-export type MaternalMortalityGapsRow = {
+export type SuicideMortalityGapsRow = {
   anio: number
   valor_ref: number
   valor_comp: number
@@ -198,10 +196,10 @@ export type MaternalMortalityGapsRow = {
   ic_sup_rel: number
 }
 
-export function filterMaternalMortalityGapsRows(
-  rows: MaternalMortalityGapsRawRow[],
-): MaternalMortalityGapsRow[] {
-  const result: MaternalMortalityGapsRow[] = []
+export function filterSuicideMortalityGapsRows(
+  rows: SuicideMortalityGapsRawRow[],
+): SuicideMortalityGapsRow[] {
+  const result: SuicideMortalityGapsRow[] = []
   for (const row of rows) {
     const anio = Number(row[0])
     if (!Number.isFinite(anio)) continue
@@ -220,12 +218,12 @@ export function filterMaternalMortalityGapsRows(
   return result.sort((a, b) => a.anio - b.anio)
 }
 
-// ── Maternal mortality analytics: temporal data (MM rate + mock DSS avg) ──────
+// ── Suicide mortality analytics: temporal data (MM rate + mock DSS avg) ──────
 // Parquet columns: anio[0], valor[1], traslado[2], empleo_informal[3],
 //   sobrecarga[4], cobertura_programa[5], transporte[6], cuidar_comunidad[7]
-export type AnalyticsMaternalRawRow = unknown[]
+export type AnalyticsSuicideRawRow = unknown[]
 
-export type AnalyticsMaternalRow = {
+export type AnalyticsSuicideRow = {
   anio: number
   valor: number
   traslado: number
@@ -236,10 +234,10 @@ export type AnalyticsMaternalRow = {
   cuidar_comunidad: number
 }
 
-export function filterAnalyticsMaternalRows(
-  rows: AnalyticsMaternalRawRow[],
-): AnalyticsMaternalRow[] {
-  const result: AnalyticsMaternalRow[] = []
+export function filterAnalyticsSuicideRows(
+  rows: AnalyticsSuicideRawRow[],
+): AnalyticsSuicideRow[] {
+  const result: AnalyticsSuicideRow[] = []
   for (const row of rows) {
     const anio = Number(row[0])
     const valor = Number(row[1])
@@ -258,13 +256,13 @@ export function filterAnalyticsMaternalRows(
   return result.sort((a, b) => a.anio - b.anio)
 }
 
-// ── Maternal mortality scatter: cross-sectional barrio data ───────────────────
+// ── Suicide mortality scatter: cross-sectional barrio data ───────────────────
 // Parquet columns: anio[0], territorio[1], valor[2], traslado[3],
 //   empleo_informal[4], sobrecarga[5], cobertura_programa[6],
 //   transporte[7], cuidar_comunidad[8], nacimientos[9]
-export type ScatterMaternalRawRow = unknown[]
+export type ScatterSuicideRawRow = unknown[]
 
-export type ScatterMaternalRow = {
+export type ScatterSuicideRow = {
   anio: number
   territorio: string
   valor: number
@@ -277,10 +275,10 @@ export type ScatterMaternalRow = {
   nacimientos: number
 }
 
-export function filterScatterMaternalRows(
-  rows: ScatterMaternalRawRow[],
-): ScatterMaternalRow[] {
-  const result: ScatterMaternalRow[] = []
+export function filterScatterSuicideRows(
+  rows: ScatterSuicideRawRow[],
+): ScatterSuicideRow[] {
+  const result: ScatterSuicideRow[] = []
   for (const row of rows) {
     const anio = Number(row[0])
     const territorio = String(row[1])
@@ -326,22 +324,22 @@ export type ForestPlotDataRow = {
 // Simulation — etnia stratifier (transport_frequency, care_overload_municipal):
 //   iso3[0], Territorio[1], cod_local[2], anio[3], zona[4], etnia[5], valor[6]
 //   Aggregate sentinels: zona="Total", etnia="Total"
-//   → filterEtniaStratifiedRows — keeps NAME_2=="San Martín del Valle" only
+//   → filterEtniaStratifiedRows — keeps NAME_2=="Suaza" only
 //
 // Simulation — sexo + etnia stratifier (journey_time):
 //   iso3[0], Territorio[1], cod_local[2], anio[3], sexo[4], zona[5], etnia[6], valor[7]
 //   Aggregate sentinels: zona="Total", etnia="Total", sexo="Mujeres" always
-//   → filterJourneyTimeStratifiedRows — keeps NAME_2=="San Martín del Valle" only
+//   → filterJourneyTimeStratifiedRows — keeps NAME_2=="Suaza" only
 //
 // Simulation — sexo-only stratifier (informal_employment):
 //   iso3[0], Territorio[1], cod_local[2], anio[3], sexo[4], zona[5], valor[6]
 //   Aggregate sentinels: zona="Total", sexo="Total"
-//   → filterSexoOnlyStratifiedRows — keeps NAME_2=="San Martín del Valle" only
+//   → filterSexoOnlyStratifiedRows — keeps NAME_2=="Suaza" only
 //
 // Simulation — zona-only stratifier (program_cover):
 //   iso3[0], Territorio[1], cod_local[2], anio[3], zona[4], valor[5]
 //   Aggregate sentinels: zona="Total"
-//   → filterZonaOnlyStratifiedRows — keeps NAME_2=="San Martín del Valle" only;
+//   → filterZonaOnlyStratifiedRows — keeps NAME_2=="Suaza" only;
 //   translates sentinels to legacy chart format ("Total" → "Todas las zonas")
 
 export type StratifiedRawRow = unknown[]
@@ -375,7 +373,7 @@ export function filterStratifiedRows(
 
 /**
  * Simulation-format filter: iso3[0], Territorio[1], cod_local[2], anio[3], zona[4], etnia[5], valor[6]
- * Keeps only Territorio == "San Martín del Valle" (global/municipio rows).
+ * Keeps only Territorio == "Suaza" (global/municipio rows).
  * Skips NA rows (e.g. years before a programme existed).
  */
 export function filterEtniaStratifiedRows(
@@ -383,7 +381,7 @@ export function filterEtniaStratifiedRows(
 ): StratifiedRow[] {
   const result: StratifiedRow[] = []
   for (const row of rows) {
-    if (String(row[1]) !== 'San Martín del Valle') continue
+    if (String(row[1]) !== 'Suaza') continue
     const anio = Number(row[3])
     const zona = String(row[4])
     const etnia = String(row[5])
@@ -398,14 +396,14 @@ export function filterEtniaStratifiedRows(
 /**
  * Simulation-format filter for journey_time (sexo + etnia stratifiers).
  * Columns: iso3[0], Territorio[1], cod_local[2], anio[3], sexo[4], zona[5], etnia[6], valor[7]
- * Keeps only Territorio == "San Martín del Valle" (global/municipio rows).
+ * Keeps only Territorio == "Suaza" (global/municipio rows).
  */
 export function filterJourneyTimeStratifiedRows(
   rows: StratifiedRawRow[],
 ): StratifiedRow[] {
   const result: StratifiedRow[] = []
   for (const row of rows) {
-    if (String(row[1]) !== 'San Martín del Valle') continue
+    if (String(row[1]) !== 'Suaza') continue
     const anio = Number(row[3])
     const zona = String(row[5])
     const etnia = String(row[6])
@@ -419,7 +417,7 @@ export function filterJourneyTimeStratifiedRows(
 /**
  * Simulation-format filter for informal_employment (sexo-only stratifier).
  * Columns: iso3[0], Territorio[1], cod_local[2], anio[3], sexo[4], zona[5], valor[6]
- * Keeps only Territorio == "San Martín del Valle" (global/municipio rows).
+ * Keeps only Territorio == "Suaza" (global/municipio rows).
  * Translates sentinels to legacy chart format: "Total" → "Todos/as" / "Todas las zonas".
  */
 export function filterSexoOnlyStratifiedRows(
@@ -427,7 +425,7 @@ export function filterSexoOnlyStratifiedRows(
 ): StratifiedRow[] {
   const result: StratifiedRow[] = []
   for (const row of rows) {
-    if (String(row[1]) !== 'San Martín del Valle') continue
+    if (String(row[1]) !== 'Suaza') continue
     const anio = Number(row[3])
     const rawSexo = String(row[4])
     const rawZona = String(row[5])
@@ -443,7 +441,7 @@ export function filterSexoOnlyStratifiedRows(
 /**
  * Simulation-format filter for zona-only indicators (program_cover).
  * Columns: iso3[0], Territorio[1], cod_local[2], anio[3], zona[4], valor[5]
- * Keeps only Territorio == "San Martín del Valle" (global/municipio rows).
+ * Keeps only Territorio == "Suaza" (global/municipio rows).
  * Skips NA rows (2016-2018, when programme did not exist).
  * Translates "Total" → "Todas las zonas" for the legacy chart path.
  */
@@ -452,14 +450,20 @@ export function filterZonaOnlyStratifiedRows(
 ): StratifiedRow[] {
   const result: StratifiedRow[] = []
   for (const row of rows) {
-    if (String(row[1]) !== 'San Martín del Valle') continue
+    if (String(row[1]) !== 'Suaza') continue
     const anio = Number(row[3])
     const rawZona = String(row[4])
     if (row[5] == null) continue
     const valor = Number(row[5])
     if (!Number.isFinite(anio) || !Number.isFinite(valor)) continue
     const zona = rawZona === 'Total' ? 'Todas las zonas' : rawZona
-    result.push({ anio, valor, zona, sexo: 'Todos/as', grupo_edad: 'Todas las edades' })
+    result.push({
+      anio,
+      valor,
+      zona,
+      sexo: 'Todos/as',
+      grupo_edad: 'Todas las edades',
+    })
   }
   return result.sort((a, b) => a.anio - b.anio)
 }
