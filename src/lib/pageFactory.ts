@@ -6,9 +6,9 @@ import {
   filterAnalyticsSuicideRows,
   filterScatterSuicideRows,
   filterSimpleRows,
+  filterStratifiedRows,
 } from './parquet'
 import { suicideMortalityIndicators } from '@/lib/indicators'
-import type { IndicatorStratifier } from '@/lib/indicators'
 import { priorities } from '@/lib/priority'
 import type { PriorityMeta } from '@/lib/priority'
 
@@ -23,6 +23,8 @@ import type {
   ScatterSuicideRow,
   SimpleRow,
   SimpleRawRow,
+  StratifiedRawRow,
+  StratifiedRow,
 } from './parquet'
 
 // ─── Loaded datasets ─────────────────────────────────────────────────────────
@@ -34,6 +36,11 @@ export interface PageDatasets {
   suicideMortalityRateData: SuicideMortalityRateRow[]
   aprobacionData: SimpleRow[]
   reprobacionData: SimpleRow[]
+  coberturaBrutaData: SimpleRow[]
+  coberturaNetaData: SimpleRow[]
+  desercionData: SimpleRow[]
+  repitenciaData: SimpleRow[]
+  previsionSocialData: StratifiedRow[]
 }
 
 export async function loadAllDatasets(): Promise<PageDatasets> {
@@ -97,6 +104,56 @@ export async function loadAllDatasets(): Promise<PageDatasets> {
     console.error('[loadAllDatasets] reprobacion:', e)
   }
 
+  let coberturaBrutaData: SimpleRow[] = []
+  try {
+    const rows = await readParquet<SimpleRawRow>(
+      dataPath('education_cobertura_bruta.parquet'),
+    )
+    coberturaBrutaData = filterSimpleRows(rows)
+  } catch (e) {
+    console.error('[loadAllDatasets] cobertura_bruta:', e)
+  }
+
+  let coberturaNetaData: SimpleRow[] = []
+  try {
+    const rows = await readParquet<SimpleRawRow>(
+      dataPath('education_cobertura_neta.parquet'),
+    )
+    coberturaNetaData = filterSimpleRows(rows)
+  } catch (e) {
+    console.error('[loadAllDatasets] cobertura_neta:', e)
+  }
+
+  let desercionData: SimpleRow[] = []
+  try {
+    const rows = await readParquet<SimpleRawRow>(
+      dataPath('education_desercion.parquet'),
+    )
+    desercionData = filterSimpleRows(rows)
+  } catch (e) {
+    console.error('[loadAllDatasets] desercion:', e)
+  }
+
+  let repitenciaData: SimpleRow[] = []
+  try {
+    const rows = await readParquet<SimpleRawRow>(
+      dataPath('education_repitencia.parquet'),
+    )
+    repitenciaData = filterSimpleRows(rows)
+  } catch (e) {
+    console.error('[loadAllDatasets] repitencia:', e)
+  }
+
+  let previsionSocialData: StratifiedRow[] = []
+  try {
+    const rows = await readParquet<StratifiedRawRow>(
+      dataPath('health_insurance.parquet'),
+    )
+    previsionSocialData = filterStratifiedRows(rows)
+  } catch (e) {
+    console.error('[loadAllDatasets] prevision-social:', e)
+  }
+
   return {
     forestPlotData,
     analyticsSuicideData,
@@ -104,6 +161,11 @@ export async function loadAllDatasets(): Promise<PageDatasets> {
     suicideMortalityRateData,
     aprobacionData,
     reprobacionData,
+    coberturaBrutaData,
+    coberturaNetaData,
+    desercionData,
+    repitenciaData,
+    previsionSocialData,
   }
 }
 
@@ -125,9 +187,13 @@ export interface PageDefinition {
   description?: string
   category?: string
   priority?: boolean
-  stratifiers?: IndicatorStratifier[]
   aprobacionData?: SimpleRow[]
   reprobacionData?: SimpleRow[]
+  coberturaBrutaData?: SimpleRow[]
+  coberturaNetaData?: SimpleRow[]
+  desercionData?: SimpleRow[]
+  repitenciaData?: SimpleRow[]
+  previsionSocialData?: StratifiedRow[]
 }
 
 export function buildPages(datasets: PageDatasets): PageDefinition[] {
@@ -215,9 +281,23 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
       ...(ind.slug === 'reprobacion'
         ? { reprobacionData: datasets.reprobacionData }
         : {}),
+      ...(ind.slug === 'cobertura_bruta'
+        ? { coberturaBrutaData: datasets.coberturaBrutaData }
+        : {}),
+      ...(ind.slug === 'cobertura_neta'
+        ? { coberturaNetaData: datasets.coberturaNetaData }
+        : {}),
+      ...(ind.slug === 'desercion'
+        ? { desercionData: datasets.desercionData }
+        : {}),
+      ...(ind.slug === 'repitencia'
+        ? { repitenciaData: datasets.repitenciaData }
+        : {}),
+      ...(ind.slug === 'prevision-social'
+        ? { previsionSocialData: datasets.previsionSocialData }
+        : {}),
     }),
   )
-
   return [...staticPages, ...indicatorPages, ...priorityPages]
 }
 

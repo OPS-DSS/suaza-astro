@@ -5,7 +5,8 @@ import Analytics from '@/components/analytics/Analytics.astro'
 import Welcome from '@/components/Welcome.astro'
 import SuicideMortalitySDoH from '@/components/suicide-mortality/SuicideMortalitySDoH.astro'
 import PrioritySelector from '@/components/PrioritySelector.astro'
-import DSSIndicator from '@/components/DSSIndicator.astro'
+import DSSIndicator from '@/components/indicators/DSSIndicator.astro'
+import StratifiedIndicator from '@/components/indicators/StratifiedIndicator.astro'
 
 import type {
   SuicideMortalityRateRow,
@@ -13,6 +14,7 @@ import type {
   AnalyticsSuicideRow,
   ScatterSuicideRow,
   SimpleRow,
+  StratifiedRow,
 } from '@/lib/parquet'
 
 export interface PageProps {
@@ -30,6 +32,11 @@ export interface PageProps {
   scatterSuicideData?: ScatterSuicideRow[]
   aprobacionData?: SimpleRow[]
   reprobacionData?: SimpleRow[]
+  coberturaBrutaData?: SimpleRow[]
+  coberturaNetaData?: SimpleRow[]
+  desercionData?: SimpleRow[]
+  repitenciaData?: SimpleRow[]
+  previsionSocialData?: StratifiedRow[]
 }
 
 type PropsResolver = (
@@ -187,6 +194,87 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       data: reprobacionData ?? [],
       yAxisLabel: '%',
       csvPath: base(baseUrl, 'education_reprobacion.csv'),
+    }),
+  },
+  cobertura_bruta: {
+    component: DSSIndicator,
+    resolveProps: (
+      { title, text, dimension, subdimensions, coberturaBrutaData, source },
+      baseUrl,
+    ) => ({
+      title,
+      text,
+      dimension,
+      source,
+      subdimensions: subdimensions ?? [],
+      data: coberturaBrutaData ?? [],
+      yAxisLabel: '%',
+      csvPath: base(baseUrl, 'education_cobertura_bruta.csv'),
+    }),
+  },
+  cobertura_neta: {
+    component: DSSIndicator,
+    resolveProps: (
+      { title, text, dimension, subdimensions, coberturaNetaData, source },
+      baseUrl,
+    ) => ({
+      title,
+      text,
+      dimension,
+      source,
+      subdimensions: subdimensions ?? [],
+      data: coberturaNetaData ?? [],
+      yAxisLabel: '%',
+      csvPath: base(baseUrl, 'education_cobertura_neta.csv'),
+    }),
+  },
+  desercion: {
+    component: DSSIndicator,
+    resolveProps: (
+      { title, text, dimension, subdimensions, desercionData, source },
+      baseUrl,
+    ) => ({
+      title,
+      text,
+      dimension,
+      source,
+      subdimensions: subdimensions ?? [],
+      data: desercionData ?? [],
+      yAxisLabel: '%',
+      csvPath: base(baseUrl, 'education_desercion.csv'),
+    }),
+  },
+  repitencia: {
+    component: DSSIndicator,
+    resolveProps: (
+      { title, text, dimension, subdimensions, repitenciaData, source },
+      baseUrl,
+    ) => ({
+      title,
+      text,
+      dimension,
+      source,
+      subdimensions: subdimensions ?? [],
+      data: repitenciaData ?? [],
+      yAxisLabel: '%',
+      csvPath: base(baseUrl, 'education_repitencia.csv'),
+    }),
+  },
+  'prevision-social': {
+    component: StratifiedIndicator,
+    resolveProps: (
+      { title, text, dimension, subdimensions, previsionSocialData, source },
+      baseUrl,
+    ) => ({
+      title,
+      text,
+      dimension,
+      source,
+      subdimensions: subdimensions ?? [],
+      data: previsionSocialData ?? [],
+      stratifiers: ['regimen'],
+      yAxisLabel: '%',
+      csvPath: base(baseUrl, 'health_insurance.csv'),
     }),
   },
 }

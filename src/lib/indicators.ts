@@ -1,8 +1,8 @@
 /**
  * Stratifier dimensions available for StratifiedLineChart.
- * Each indicator declares which ones apply to its data.
+ * Indicator declares which ones apply to its data.
  */
-export type IndicatorStratifier = 'zona' | 'etnia' | 'sexo' | 'grupo_edad'
+export type IndicatorStratifier = 'regimen'
 
 export type IndicatorMeta = {
   slug: string
@@ -13,7 +13,7 @@ export type IndicatorMeta = {
   dimension: string
   subdimensions: string[]
   priority: boolean
-  /** Stratifier buttons shown in the chart (always includes implicit "total"). */
+  stratifiers?: IndicatorStratifier[]
   source: string
 }
 
@@ -23,7 +23,7 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     title: 'Aprobación',
     text: 'Aprobación',
     description: 'Aprobación',
-    date: '2026-04-10',
+    date: '2026-07-15',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -34,21 +34,66 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     title: 'Reprobación',
     text: 'Reprobación',
     description: 'Reprobación',
-    date: '2026-04-10',
+    date: '2026-07-15',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
     source: 'Registros territoriales de reprobación',
   },
   {
+    slug: 'cobertura_bruta',
+    title: 'Cobertura bruta',
+    text: 'Cobertura bruta',
+    description: 'Cobertura bruta',
+    date: '2026-07-15',
+    dimension: 'dss',
+    subdimensions: ['educación'],
+    priority: true,
+    source: 'Registros territoriales de cobertura bruta',
+  },
+  {
+    slug: 'cobertura_neta',
+    title: 'Cobertura neta',
+    text: 'Cobertura neta',
+    description: 'Cobertura neta',
+    date: '2026-07-15',
+    dimension: 'dss',
+    subdimensions: ['educación'],
+    priority: true,
+    source: 'Registros territoriales de cobertura neta',
+  },
+  {
+    slug: 'desercion',
+    title: 'Deserción',
+    text: 'Deserción',
+    description: 'Deserción',
+    date: '2026-07-15',
+    dimension: 'dss',
+    subdimensions: ['educación'],
+    priority: true,
+    source: 'Registros territoriales de deserción',
+  },
+  {
+    slug: 'repitencia',
+    title: 'Repitencia',
+    text: 'Repitencia',
+    description: 'Repitencia',
+    date: '2026-07-15',
+    dimension: 'dss',
+    subdimensions: ['educación'],
+    priority: true,
+    source: 'Registros territoriales de repitencia',
+  },
+  {
     slug: 'prevision-social',
     title: 'Previsión social',
     text: 'Previsión social',
     description: 'Previsión social',
-    date: '2026-05-10',
+    date: '2026-07-15',
     dimension: 'policy',
     subdimensions: ['programas sociales'],
     priority: true,
+    stratifiers: ['regimen'],
     source: 'Registros administrativos del sistema previsional',
   },
 ]

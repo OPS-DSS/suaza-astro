@@ -1,8 +1,7 @@
 import { useState, useMemo, useRef } from 'react'
 import { DSLineChart } from '@ops-dss/charts/line-chart'
 import type { SimpleRow } from '@/lib/parquet'
-import type { IndicatorStratifier } from '@/lib/indicators'
-import { ExpandablePanel } from './ExpandablePanel'
+import { ExpandablePanel } from '../ExpandablePanel'
 
 const DownloadIcon = () => (
   <svg
@@ -37,16 +36,6 @@ export const DSSLineChart = ({
 }: StratifiedLineChartProps) => {
   const [view, setView] = useState<'chart' | 'table'>('chart')
   const chartRef = useRef<HTMLDivElement>(null)
-
-  // ── Year selection (shared between chart highlight and map) ───────────────
-  const availableYears = useMemo(() => {
-    if (!data || data.length === 0) return []
-    return [...new Set(data.map((r) => r.anio))].sort((a, b) => b - a)
-  }, [data])
-
-  const lastYear = availableYears[0] ?? null
-  const [selectedYear, setSelectedYear] = useState<number | null>(null)
-  const effectiveYear: number | null = selectedYear ?? lastYear
 
   if (!data || data.length === 0) {
     return (
@@ -113,7 +102,6 @@ export const DSSLineChart = ({
                 xAxisLabel="Año"
                 yAxisLabel={yAxisLabel}
                 yAxisDomain={[0, 100]}
-                highlightX={effectiveYear ?? undefined}
               />
             </div>
           )}
