@@ -1,0 +1,102 @@
+anio,territorio,indicador,label,valor_indicador,valor_suicidio
+2011,Suaza,aprobacion,Aprobación escolar,92.08,0
+2012,Suaza,aprobacion,Aprobación escolar,89.59,5.174644243208279
+2013,Suaza,aprobacion,Aprobación escolar,92.91,15.203729981755524
+2014,Suaza,aprobacion,Aprobación escolar,97.71,9.935419771485344
+2015,Suaza,aprobacion,Aprobación escolar,89.22,4.878048780487805
+2016,Suaza,aprobacion,Aprobación escolar,90.02,4.773269689737471
+2017,Suaza,aprobacion,Aprobación escolar,92.34,0
+2018,Suaza,aprobacion,Aprobación escolar,92.71,4.576030750926646
+2019,Suaza,aprobacion,Aprobación escolar,91.49,4.4758750335690625
+2020,Suaza,aprobacion,Aprobación escolar,93.55,13.214112672334052
+2021,Suaza,aprobacion,Aprobación escolar,86.44,8.679425422037061
+2022,Suaza,aprobacion,Aprobación escolar,86.73,17.16738197424893
+2023,Suaza,aprobacion,Aprobación escolar,89.62,0
+2024,Suaza,aprobacion,Aprobación escolar,91.55,4.196038939241356
+2009,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.7815913501524813,11.089548100914888
+2010,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.7712460755656598,10.826025765941322
+2011,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.8084678486372056,0
+2012,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.8491591203104787,5.174644243208279
+2013,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.8469997972836002,15.203729981755524
+2014,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.8295081967213115,9.935419771485344
+2015,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.8352195121951219,4.878048780487805
+2016,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.8332696897374702,4.773269689737471
+2017,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.8403628542036846,0
+2018,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.862261474397108,4.576030750926646
+2019,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.8549368901620267,4.4758750335690625
+2020,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.8794432453860723,13.214112672334052
+2021,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.9113830664410016,8.679425422037061
+2022,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.9298712446351931,17.16738197424893
+2023,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.9585773703420762,0
+2024,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.9776351124538436,4.196038939241356
+2025,Suaza,aseguramiento,Cobertura de aseguramiento en salud,0.9867678778828605,16.592002654720424
+2011,Suaza,cobertura_bruta,Cobertura bruta educativa,114.5,0
+2012,Suaza,cobertura_bruta,Cobertura bruta educativa,112.6,5.174644243208279
+2013,Suaza,cobertura_bruta,Cobertura bruta educativa,115,15.203729981755524
+2014,Suaza,cobertura_bruta,Cobertura bruta educativa,101.63,9.935419771485344
+2015,Suaza,cobertura_bruta,Cobertura bruta educativa,104.34,4.878048780487805
+2016,Suaza,cobertura_bruta,Cobertura bruta educativa,102.25,4.773269689737471
+2017,Suaza,cobertura_bruta,Cobertura bruta educativa,99.52,0
+2018,Suaza,cobertura_bruta,Cobertura bruta educativa,101.5,4.576030750926646
+2019,Suaza,cobertura_bruta,Cobertura bruta educativa,99.6,4.4758750335690625
+2020,Suaza,cobertura_bruta,Cobertura bruta educativa,98.29,13.214112672334052
+2021,Suaza,cobertura_bruta,Cobertura bruta educativa,100.59,8.679425422037061
+2022,Suaza,cobertura_bruta,Cobertura bruta educativa,102.88,17.16738197424893
+2023,Suaza,cobertura_bruta,Cobertura bruta educativa,102.8,0
+2024,Suaza,cobertura_bruta,Cobertura bruta educativa,100.94,4.196038939241356
+2011,Suaza,cobertura_neta,Cobertura neta educativa,99.3,0
+2012,Suaza,cobertura_neta,Cobertura neta educativa,100.7,5.174644243208279
+2013,Suaza,cobertura_neta,Cobertura neta educativa,93.3,15.203729981755524
+2014,Suaza,cobertura_neta,Cobertura neta educativa,91.42,9.935419771485344
+2015,Suaza,cobertura_neta,Cobertura neta educativa,93.1,4.878048780487805
+2016,Suaza,cobertura_neta,Cobertura neta educativa,90.88,4.773269689737471
+2017,Suaza,cobertura_neta,Cobertura neta educativa,89.46,0
+2018,Suaza,cobertura_neta,Cobertura neta educativa,91.49,4.576030750926646
+2019,Suaza,cobertura_neta,Cobertura neta educativa,90.46,4.4758750335690625
+2020,Suaza,cobertura_neta,Cobertura neta educativa,88.67,13.214112672334052
+2021,Suaza,cobertura_neta,Cobertura neta educativa,90.95,8.679425422037061
+2022,Suaza,cobertura_neta,Cobertura neta educativa,93.39,17.16738197424893
+2023,Suaza,cobertura_neta,Cobertura neta educativa,95.37,0
+2024,Suaza,cobertura_neta,Cobertura neta educativa,95.11,4.196038939241356
+2011,Suaza,desercion,Deserción escolar,5.97,0
+2012,Suaza,desercion,Deserción escolar,6.62,5.174644243208279
+2013,Suaza,desercion,Deserción escolar,3.28,15.203729981755524
+2014,Suaza,desercion,Deserción escolar,2.1,9.935419771485344
+2015,Suaza,desercion,Deserción escolar,4.15,4.878048780487805
+2016,Suaza,desercion,Deserción escolar,3.66,4.773269689737471
+2017,Suaza,desercion,Deserción escolar,2.23,0
+2018,Suaza,desercion,Deserción escolar,2.53,4.576030750926646
+2019,Suaza,desercion,Deserción escolar,4.73,4.4758750335690625
+2020,Suaza,desercion,Deserción escolar,2.53,13.214112672334052
+2021,Suaza,desercion,Deserción escolar,7.72,8.679425422037061
+2022,Suaza,desercion,Deserción escolar,5.44,17.16738197424893
+2023,Suaza,desercion,Deserción escolar,4.45,0
+2024,Suaza,desercion,Deserción escolar,4.96,4.196038939241356
+2011,Suaza,repitencia,Repitencia escolar,0.33,0
+2012,Suaza,repitencia,Repitencia escolar,0.35,5.174644243208279
+2013,Suaza,repitencia,Repitencia escolar,0.94,15.203729981755524
+2014,Suaza,repitencia,Repitencia escolar,3.17,9.935419771485344
+2015,Suaza,repitencia,Repitencia escolar,4.78,4.878048780487805
+2016,Suaza,repitencia,Repitencia escolar,3.75,4.773269689737471
+2017,Suaza,repitencia,Repitencia escolar,1.45,0
+2018,Suaza,repitencia,Repitencia escolar,1.79,4.576030750926646
+2019,Suaza,repitencia,Repitencia escolar,1.26,4.4758750335690625
+2020,Suaza,repitencia,Repitencia escolar,3.24,13.214112672334052
+2021,Suaza,repitencia,Repitencia escolar,3.59,8.679425422037061
+2022,Suaza,repitencia,Repitencia escolar,4.11,17.16738197424893
+2023,Suaza,repitencia,Repitencia escolar,9.93,0
+2024,Suaza,repitencia,Repitencia escolar,8.87,4.196038939241356
+2011,Suaza,reprobacion,Reprobación escolar,1.96,0
+2012,Suaza,reprobacion,Reprobación escolar,3.79,5.174644243208279
+2013,Suaza,reprobacion,Reprobación escolar,3.81,15.203729981755524
+2014,Suaza,reprobacion,Reprobación escolar,0.19,9.935419771485344
+2015,Suaza,reprobacion,Reprobación escolar,6.63,4.878048780487805
+2016,Suaza,reprobacion,Reprobación escolar,6.32,4.773269689737471
+2017,Suaza,reprobacion,Reprobación escolar,5.43,0
+2018,Suaza,reprobacion,Reprobación escolar,4.76,4.576030750926646
+2019,Suaza,reprobacion,Reprobación escolar,3.79,4.4758750335690625
+2020,Suaza,reprobacion,Reprobación escolar,3.92,13.214112672334052
+2021,Suaza,reprobacion,Reprobación escolar,5.84,8.679425422037061
+2022,Suaza,reprobacion,Reprobación escolar,7.83,17.16738197424893
+2023,Suaza,reprobacion,Reprobación escolar,5.93,0
+2024,Suaza,reprobacion,Reprobación escolar,3.48,4.196038939241356

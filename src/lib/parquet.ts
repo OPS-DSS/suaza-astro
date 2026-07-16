@@ -218,24 +218,28 @@ export function filterSuicideMortalityGapsRows(
   return result.sort((a, b) => a.anio - b.anio)
 }
 
-// ── Suicide mortality analytics: temporal data (MM rate + mock DSS avg) ──────
-export type AnalyticsSuicideRawRow = unknown[]
+// ── Suicide mortality analytics: temporal data (suicide rate + DSS indicators) ─
+// Parquet columns (by index):
+//   anio[0], valor[1], cobertura_bruta[2], cobertura_neta[3], desercion[4],
+//   aprobacion[5], reprobacion[6], repitencia[7], aseguramiento[8]
+// `aseguramiento` is stored as a 0-1 fraction; every other indicator is already
+// a percentage, so aseguramiento is normalized to the same 0-100 scale here.
+export type AnalyticsRawRow = unknown[]
 
-export type AnalyticsSuicideRow = {
+export type AnalyticsRow = {
   anio: number
   valor: number
-  traslado: number
-  empleo_informal: number
-  sobrecarga: number
-  cobertura_programa: number
-  transporte: number
-  cuidar_comunidad: number
+  cobertura_bruta: number
+  cobertura_neta: number
+  desercion: number
+  aprobacion: number
+  reprobacion: number
+  repitencia: number
+  aseguramiento: number
 }
 
-export function filterAnalyticsSuicideRows(
-  rows: AnalyticsSuicideRawRow[],
-): AnalyticsSuicideRow[] {
-  const result: AnalyticsSuicideRow[] = []
+export function filterAnalyticsRows(rows: AnalyticsRawRow[]): AnalyticsRow[] {
+  const result: AnalyticsRow[] = []
   for (const row of rows) {
     const anio = Number(row[0])
     const valor = Number(row[1])
@@ -243,66 +247,64 @@ export function filterAnalyticsSuicideRows(
     result.push({
       anio,
       valor,
-      traslado: row[2] == null ? NaN : Number(row[2]),
-      empleo_informal: row[3] == null ? NaN : Number(row[3]),
-      sobrecarga: row[4] == null ? NaN : Number(row[4]),
-      cobertura_programa: row[5] == null ? NaN : Number(row[5]),
-      transporte: row[6] == null ? NaN : Number(row[6]),
-      cuidar_comunidad: row[7] == null ? NaN : Number(row[7]),
+      cobertura_bruta: row[2] == null ? NaN : Number(row[2]),
+      cobertura_neta: row[3] == null ? NaN : Number(row[3]),
+      desercion: row[4] == null ? NaN : Number(row[4]),
+      aprobacion: row[5] == null ? NaN : Number(row[5]),
+      reprobacion: row[6] == null ? NaN : Number(row[6]),
+      repitencia: row[7] == null ? NaN : Number(row[7]),
+      aseguramiento: row[8] == null ? NaN : Number(row[8]) * 100,
     })
   }
   return result.sort((a, b) => a.anio - b.anio)
 }
 
-// ── Suicide mortality scatter: cross-sectional barrio data ───────────────────
-export type ScatterSuicideRawRow = unknown[]
+// ── Suicide mortality scatter: indicator value vs suicide mortality, by year ──
+// Parquet columns (by index, long format):
+//   anio[0], territorio[1], indicador[2], label[3], valor_indicador[4],
+//   valor_suicidio[5]
+// `territorio` is always "Suaza" (municipality-level, no barrio breakdown).
+// `valor_indicador` for `aseguramiento` is a 0-1 fraction; normalized to 0-100
+// to match the scale of every other indicator.
+export type ScatterRawRow = unknown[]
 
-export type ScatterSuicideRow = {
+export type ScatterRow = {
   anio: number
-  territorio: string
-  valor: number
-  traslado: number
-  empleo_informal: number
-  sobrecarga: number
-  cobertura_programa: number
-  transporte: number
-  cuidar_comunidad: number
-  nacimientos: number
+  indicador: string
+  label: string
+  valor_indicador: number
+  valor_suicidio: number
 }
 
-export function filterScatterSuicideRows(
-  rows: ScatterSuicideRawRow[],
-): ScatterSuicideRow[] {
-  const result: ScatterSuicideRow[] = []
+export function filterScatterRows(rows: ScatterRawRow[]): ScatterRow[] {
+  const result: ScatterRow[] = []
   for (const row of rows) {
     const anio = Number(row[0])
-    const territorio = String(row[1])
-    const valor = Number(row[2])
-    if (!Number.isFinite(anio) || !Number.isFinite(valor)) continue
+    const indicador = String(row[2])
+    const label = String(row[3])
+    const valor_suicidio = Number(row[5])
+    if (!Number.isFinite(anio) || !indicador || !Number.isFinite(valor_suicidio))
+      continue
+    const rawIndicadorValue = row[4] == null ? NaN : Number(row[4])
     result.push({
       anio,
-      territorio,
-      valor,
-      traslado: row[3] == null ? NaN : Number(row[3]),
-      empleo_informal: row[4] == null ? NaN : Number(row[4]),
-      sobrecarga: row[5] == null ? NaN : Number(row[5]),
-      cobertura_programa: row[6] == null ? NaN : Number(row[6]),
-      transporte: row[7] == null ? NaN : Number(row[7]),
-      cuidar_comunidad: row[8] == null ? NaN : Number(row[8]),
-      nacimientos: row[9] == null ? NaN : Number(row[9]),
+      indicador,
+      label,
+      valor_indicador:
+        indicador === 'aseguramiento' ? rawIndicadorValue * 100 : rawIndicadorValue,
+      valor_suicidio,
     })
   }
-  return result
+  return result.sort((a, b) => a.anio - b.anio)
 }
 
 // ── Forest plot / Correlation data types ─────────────────────────────────────
-// Parquet columns (by index):
-//   anio[0], indicador[1], label[2], correlacion[3], ci_lower[4],
-//   ci_upper[5], p_value[6], n[7]
+// Parquet columns (by index), one row per indicator (no year dimension):
+//   indicador[0], label[1], correlacion[2], ci_lower[3], ci_upper[4],
+//   p_value[5], n[6]
 export type ForestPlotRawRow = unknown[]
 
 export type ForestPlotDataRow = {
-  anio: number
   indicador: string
   label: string
   correlacion: number
@@ -339,26 +341,18 @@ export function filterForestPlotRows(
 ): ForestPlotDataRow[] {
   const result: ForestPlotDataRow[] = []
   for (const row of rows) {
-    const anio = Number(row[0])
-    const indicador = String(row[1])
-    const label = String(row[2])
-    const correlacion = Number(row[3])
-    if (
-      !Number.isFinite(anio) ||
-      !indicador ||
-      !label ||
-      !Number.isFinite(correlacion)
-    )
-      continue
+    const indicador = String(row[0])
+    const label = String(row[1])
+    const correlacion = Number(row[2])
+    if (!indicador || !label || !Number.isFinite(correlacion)) continue
     result.push({
-      anio,
       indicador,
       label,
       correlacion,
-      ci_lower: Number(row[4]),
-      ci_upper: Number(row[5]),
-      p_value: Number(row[6]),
-      n: Number(row[7]),
+      ci_lower: Number(row[3]),
+      ci_upper: Number(row[4]),
+      p_value: Number(row[5]),
+      n: Number(row[6]),
     })
   }
   return result

@@ -1,13 +1,13 @@
 import { DSLineChart } from '@ops-dss/charts/line-chart'
 import type { LineChartData } from '@ops-dss/charts/line-chart'
-import type { AnalyticsMaternalRow } from '@/lib/parquet'
+import type { AnalyticsRow } from '@/lib/parquet'
 import {
   ANALYTICS_INDICATORS,
   type AnalyticsIndicatorKey,
 } from './mockIndicators'
 
 interface AnalyticsDualChartProps {
-  data: AnalyticsMaternalRow[]
+  data: AnalyticsRow[]
   selectedIndicator?: AnalyticsIndicatorKey
   selectedYear?: number | null
   isFullscreen?: boolean
@@ -20,7 +20,7 @@ interface AnalyticsDualChartProps {
  */
 export const AnalyticsDualChart = ({
   data,
-  selectedIndicator = 'traslado',
+  selectedIndicator = 'cobertura_bruta',
   selectedYear,
   isFullscreen = false,
 }: AnalyticsDualChartProps) => {
@@ -43,12 +43,12 @@ export const AnalyticsDualChart = ({
   const indicatorData: LineChartData[] = data.flatMap((row) => {
     const raw = row[selectedIndicator]
 
-    return raw == null
+    return raw == null || !Number.isFinite(raw)
       ? []
       : [
           {
             anio: row.anio,
-            [selectedIndicator]: raw * 100,
+            [selectedIndicator]: raw,
           },
         ]
   })
@@ -66,14 +66,13 @@ export const AnalyticsDualChart = ({
             lines={[
               {
                 dataKey: 'valor',
-                name: 'Mortalidad materna (×100k NV)',
+                name: 'Mortalidad por suicidio (×100k NV)',
                 color: '#e11d48',
               },
             ]}
             height={chartHeight}
             xAxisLabel="Año"
-            yAxisLabel="Mortalidad materna (×100k NV)"
-            yAxisDomain={[0, 100]}
+            yAxisLabel="Mortalidad por suicidio (×100k NV)"
             highlightX={selectedYear ?? undefined}
           />
         </div>
@@ -91,7 +90,6 @@ export const AnalyticsDualChart = ({
             height={chartHeight}
             xAxisLabel="Año"
             yAxisLabel={indicatorMeta.axisLabel}
-            yAxisDomain={[0, 100]}
             highlightX={selectedYear ?? undefined}
           />
         </div>

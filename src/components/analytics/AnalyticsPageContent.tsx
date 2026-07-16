@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { DSForestPlot } from '@ops-dss/charts/forest-plot'
 import { DSScatterChart } from '@ops-dss/charts/scatter-chart'
 import { AnalyticsDualChart } from './AnalyticsDualChart'
@@ -7,44 +7,36 @@ import {
   ANALYTICS_INDICATORS,
   type AnalyticsIndicatorKey,
 } from './mockIndicators'
-import type {
-  ForestPlotDataRow,
-  AnalyticsMaternalRow,
-  ScatterMaternalRow,
-} from '@/lib/parquet'
-
-// ── Constants ─────────────────────────────────────────────────────────────────
-
-const MATERNAL_LABEL = 'Mortalidad materna (x100k NV)'
+import type { ForestPlotDataRow, AnalyticsRow, ScatterRow } from '@/lib/parquet'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface AnalyticsPageContentProps {
   forestPlotData?: ForestPlotDataRow[]
-  analyticsMaternalData?: AnalyticsMaternalRow[]
-  scatterMaternalData?: ScatterMaternalRow[]
+  analyticsData?: AnalyticsRow[]
+  scatterData?: ScatterRow[]
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
 
 export const AnalyticsPageContent = ({
   forestPlotData,
-  analyticsMaternalData,
-  scatterMaternalData,
+  analyticsData,
+  scatterData,
 }: AnalyticsPageContentProps) => {
   const [selectedIndicator, setSelectedIndicator] =
-    useState<AnalyticsIndicatorKey>('traslado')
+    useState<AnalyticsIndicatorKey>('cobertura_bruta')
 
   // ── Year selection ──────────────────────────────────────────────────────────
 
   // Derive available years from scatter data (sorted descending for display)
   const availableYears = useMemo(() => {
-    if (!scatterMaternalData || scatterMaternalData.length === 0) return []
-    const years = [...new Set(scatterMaternalData.map((r) => r.anio))].sort(
+    if (!scatterData || scatterData.length === 0) return []
+    const years = [...new Set(scatterData.map((r) => r.anio))].sort(
       (a, b) => b - a,
     )
     return years
-  }, [scatterMaternalData])
+  }, [scatterData])
 
   const lastYear = availableYears[0] ?? null
 
@@ -56,30 +48,25 @@ export const AnalyticsPageContent = ({
 
   const hasData =
     (forestPlotData && forestPlotData.length > 0) ||
-    (analyticsMaternalData && analyticsMaternalData.length > 0) ||
-    (scatterMaternalData && scatterMaternalData.length > 0)
+    (analyticsData && analyticsData.length > 0) ||
+    (scatterData && scatterData.length > 0)
 
   const selectedMeta = ANALYTICS_INDICATORS[selectedIndicator]
 
-  // Forest plot: filter to the selected year; rows without data for this year
-  // are simply absent (the R script skips indicator-year combos with n < 4).
-  const forestPlotForYear = useMemo(() => {
-    if (!forestPlotData || effectiveYear === null) return forestPlotData ?? []
-    return forestPlotData.filter((r) => r.anio === effectiveYear)
-  }, [forestPlotData, effectiveYear])
-
-  const scatterPoints =
-    scatterMaternalData && effectiveYear !== null
-      ? scatterMaternalData
-          .filter((r) => r.anio === effectiveYear)
-          .map((r) => ({
-            x: (r[selectedIndicator] as number) * 100,
-            y: r.valor,
-            label: r.territorio,
-            size: r.nacimientos,
-          }))
-          .filter((d) => Number.isFinite(d.x) && Number.isFinite(d.y))
-      : []
+  // Scatter: one point per year for the selected indicator (x = indicator
+  // value that year, y = suicide mortality that year). The data is
+  // municipality-level (Suaza only), so there is no barrio breakdown anymore.
+  const scatterPoints = useMemo(() => {
+    if (!scatterData) return []
+    return scatterData
+      .filter((r) => r.indicador === selectedIndicator)
+      .map((r) => ({
+        x: r.valor_indicador,
+        y: r.valor_suicidio,
+        label: String(r.anio),
+      }))
+      .filter((d) => Number.isFinite(d.x) && Number.isFinite(d.y))
+  }, [scatterData, selectedIndicator])
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -123,38 +110,28 @@ export const AnalyticsPageContent = ({
           {forestPlotData && forestPlotData.length > 0 && (
             <ExpandablePanel>
               <h2 className="text-xl font-bold text-gray-900 mr-8">
-                Correlaciones con mortalidad materna
+                Correlaciones con mortalidad por suicidio
               </h2>
               <p className="text-sm text-gray-500 mt-1">
-                Correlación de Spearman entre cada indicador y la mortalidad
-                materna (barrios de San Martín del Valle,{' '}
-                {effectiveYear !== null
-                  ? `año ${effectiveYear}`
-                  : 'último año disponible'}
-                ). Haz clic en un indicador para explorar su relación.
+                Correlación de Spearman entre cada indicador y la mortalidad por
+                suicidio. Haz clic en un indicador para explorar su relación.
               </p>
-              {forestPlotForYear.length > 0 ? (
-                <DSForestPlot
-                  data={forestPlotForYear}
-                  selectedIndicator={selectedIndicator}
-                  onSelectIndicator={(ind) =>
-                    setSelectedIndicator(ind as AnalyticsIndicatorKey)
-                  }
-                />
-              ) : (
-                <p className="text-gray-400 italic text-sm py-6 text-center">
-                  Sin datos suficientes para {effectiveYear}.
-                </p>
-              )}
+              <DSForestPlot
+                data={forestPlotData}
+                selectedIndicator={selectedIndicator}
+                onSelectIndicator={(ind) =>
+                  setSelectedIndicator(ind as AnalyticsIndicatorKey)
+                }
+              />
             </ExpandablePanel>
           )}
 
           {/* ── Temporal trends ── */}
-          {analyticsMaternalData && analyticsMaternalData.length > 0 && (
+          {analyticsData && analyticsData.length > 0 && (
             <ExpandablePanel className="relative border rounded-lg p-4 flex flex-col gap-4">
               {(isFullscreen) => (
                 <AnalyticsDualChart
-                  data={analyticsMaternalData}
+                  data={analyticsData}
                   selectedIndicator={selectedIndicator}
                   selectedYear={effectiveYear}
                   isFullscreen={isFullscreen}
@@ -174,21 +151,17 @@ export const AnalyticsPageContent = ({
                   <span style={{ color: selectedMeta.color }}>
                     {selectedMeta.title}
                   </span>{' '}
-                  vs Mortalidad materna (x100k NV)
+                  vs Mortalidad por suicidio (x100k NV)
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">
-                  Cada punto es un barrio de San Martín del Valle (
-                  {effectiveYear !== null
-                    ? `año ${effectiveYear}`
-                    : 'último año disponible'}
-                  ). El tamaño refleja el número de nacidos vivos. La línea
+                  Cada punto es un año en el municipio de Suaza. La línea
                   punteada muestra la tendencia lineal.
                 </p>
               </div>
               <DSScatterChart
                 data={scatterPoints}
                 xLabel={selectedMeta.axisLabel}
-                yLabel="Mortalidad materna (×100k NV)"
+                yLabel="Mortalidad por suicidio (×100k NV)"
                 width={800}
               />
             </ExpandablePanel>

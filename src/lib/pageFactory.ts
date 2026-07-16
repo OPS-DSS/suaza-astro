@@ -3,8 +3,8 @@ import {
   dataPath,
   filterSuicideMortalityRateRows,
   filterForestPlotRows,
-  filterAnalyticsSuicideRows,
-  filterScatterSuicideRows,
+  filterAnalyticsRows,
+  filterScatterRows,
   filterSimpleRows,
   filterStratifiedRows,
 } from './parquet'
@@ -17,10 +17,10 @@ import type {
   SuicideMortalityRateRow,
   ForestPlotRawRow,
   ForestPlotDataRow,
-  AnalyticsSuicideRawRow,
-  AnalyticsSuicideRow,
-  ScatterSuicideRawRow,
-  ScatterSuicideRow,
+  AnalyticsRawRow,
+  AnalyticsRow,
+  ScatterRawRow,
+  ScatterRow,
   SimpleRow,
   SimpleRawRow,
   StratifiedRawRow,
@@ -31,8 +31,8 @@ import type {
 
 export interface PageDatasets {
   forestPlotData: ForestPlotDataRow[]
-  analyticsSuicideData: AnalyticsSuicideRow[]
-  scatterSuicideData: ScatterSuicideRow[]
+  analyticsData: AnalyticsRow[]
+  scatterData: ScatterRow[]
   suicideMortalityRateData: SuicideMortalityRateRow[]
   aprobacionData: SimpleRow[]
   reprobacionData: SimpleRow[]
@@ -47,31 +47,31 @@ export async function loadAllDatasets(): Promise<PageDatasets> {
   let forestPlotData: ForestPlotDataRow[] = []
   try {
     const rows = await readParquet<ForestPlotRawRow>(
-      dataPath('mock_forest_plot.parquet'),
+      dataPath('suaza_forest_plot.parquet'),
     )
     forestPlotData = filterForestPlotRows(rows)
   } catch (e) {
-    console.error('[loadAllDatasets] mock_forest_plot:', e)
+    console.error('[loadAllDatasets] suaza_forest_plot:', e)
   }
 
-  let analyticsSuicideData: AnalyticsSuicideRow[] = []
+  let analyticsData: AnalyticsRow[] = []
   try {
-    const rows = await readParquet<AnalyticsSuicideRawRow>(
-      dataPath('mock_analytics_maternal.parquet'),
+    const rows = await readParquet<AnalyticsRawRow>(
+      dataPath('suaza_analytics.parquet'),
     )
-    analyticsSuicideData = filterAnalyticsSuicideRows(rows)
+    analyticsData = filterAnalyticsRows(rows)
   } catch (e) {
-    console.error('[loadAllDatasets] mock_analytics_maternal:', e)
+    console.error('[loadAllDatasets] suaza_analytics:', e)
   }
 
-  let scatterSuicideData: ScatterSuicideRow[] = []
+  let scatterData: ScatterRow[] = []
   try {
-    const rows = await readParquet<ScatterSuicideRawRow>(
-      dataPath('mock_scatter_maternal.parquet'),
+    const rows = await readParquet<ScatterRawRow>(
+      dataPath('suaza_scatter.parquet'),
     )
-    scatterSuicideData = filterScatterSuicideRows(rows)
+    scatterData = filterScatterRows(rows)
   } catch (e) {
-    console.error('[loadAllDatasets] mock_scatter_maternal:', e)
+    console.error('[loadAllDatasets] suaza_scatter:', e)
   }
 
   let suicideMortalityRateData: SuicideMortalityRateRow[] = []
@@ -156,8 +156,8 @@ export async function loadAllDatasets(): Promise<PageDatasets> {
 
   return {
     forestPlotData,
-    analyticsSuicideData,
-    scatterSuicideData,
+    analyticsData,
+    scatterData,
     suicideMortalityRateData,
     aprobacionData,
     reprobacionData,
@@ -180,8 +180,8 @@ export interface PageDefinition {
   source?: string
   data?: SuicideMortalityRateRow[]
   forestPlotData?: ForestPlotDataRow[]
-  analyticsSuicideData?: AnalyticsSuicideRow[]
-  scatterSuicideData?: ScatterSuicideRow[]
+  analyticsData?: AnalyticsRow[]
+  scatterData?: ScatterRow[]
   dimension?: string
   subdimensions?: string[]
   description?: string
@@ -236,8 +236,8 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
       navbar: false,
       priority: false,
       forestPlotData: datasets.forestPlotData,
-      analyticsSuicideData: datasets.analyticsSuicideData,
-      scatterSuicideData: datasets.scatterSuicideData,
+      analyticsData: datasets.analyticsData,
+      scatterData: datasets.scatterData,
     },
   ]
 
