@@ -105,68 +105,39 @@ export const AnalyticsPageContent = ({
       )}
 
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex flex-col md:basis-1/2 flex-1 gap-4">
-          {/* ── Forest plot ── */}
-          {forestPlotData && forestPlotData.length > 0 && (
-            <ExpandablePanel>
-              <h2 className="text-xl font-bold text-gray-900 mr-8">
-                Correlaciones con mortalidad por suicidio
-              </h2>
-              <p className="text-sm text-gray-500 mt-1">
-                Correlación de Spearman entre cada indicador y la mortalidad por
-                suicidio. Haz clic en un indicador para explorar su relación.
-              </p>
-              <DSForestPlot
-                data={forestPlotData}
+        {/* ── Forest plot ── */}
+        {forestPlotData && forestPlotData.length > 0 && (
+          <ExpandablePanel className="flex flex-col md:basis-1/2 flex-1 gap-4 relative border rounded-lg p-4">
+            <h2 className="text-xl font-bold text-gray-900 mr-8">
+              Correlaciones con mortalidad por suicidio
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              Correlación de Spearman entre cada indicador y la mortalidad por
+              suicidio. Haz clic en un indicador para explorar su relación.
+            </p>
+            <DSForestPlot
+              data={forestPlotData}
+              selectedIndicator={selectedIndicator}
+              onSelectIndicator={(ind) =>
+                setSelectedIndicator(ind as AnalyticsIndicatorKey)
+              }
+            />
+          </ExpandablePanel>
+        )}
+
+        {/* ── Temporal trends ── */}
+        {analyticsData && analyticsData.length > 0 && (
+          <ExpandablePanel className="relative  md:basis-1/2 border rounded-lg p-4 flex flex-col gap-4">
+            {(isFullscreen) => (
+              <AnalyticsDualChart
+                data={analyticsData}
                 selectedIndicator={selectedIndicator}
-                onSelectIndicator={(ind) =>
-                  setSelectedIndicator(ind as AnalyticsIndicatorKey)
-                }
+                selectedYear={effectiveYear}
+                isFullscreen={isFullscreen}
               />
-            </ExpandablePanel>
-          )}
-
-          {/* ── Temporal trends ── */}
-          {analyticsData && analyticsData.length > 0 && (
-            <ExpandablePanel className="relative border rounded-lg p-4 flex flex-col gap-4">
-              {(isFullscreen) => (
-                <AnalyticsDualChart
-                  data={analyticsData}
-                  selectedIndicator={selectedIndicator}
-                  selectedYear={effectiveYear}
-                  isFullscreen={isFullscreen}
-                />
-              )}
-            </ExpandablePanel>
-          )}
-        </div>
-
-        <div className="flex flex-col md:basis-1/2 gap-4 flex-1">
-          {/* ── Scatter chart ── */}
-          {scatterPoints.length > 0 && (
-            <ExpandablePanel className="relative border rounded-lg p-4 flex flex-col gap-4">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 mr-8">
-                  Dispersión:{' '}
-                  <span style={{ color: selectedMeta.color }}>
-                    {selectedMeta.title}
-                  </span>{' '}
-                  vs Mortalidad por suicidio (x100k NV)
-                </h2>
-                <p className="text-sm text-gray-500 mt-1">
-                  Cada punto es un año en el municipio de Suaza. La línea
-                  punteada muestra la tendencia lineal.
-                </p>
-              </div>
-              <DSScatterChart
-                data={scatterPoints}
-                xLabel={selectedMeta.axisLabel}
-                yLabel="Mortalidad por suicidio (×100k NV)"
-                width={800}
-              />
-            </ExpandablePanel>
-          )}
-        </div>
+            )}
+          </ExpandablePanel>
+        )}
       </div>
     </div>
   )
