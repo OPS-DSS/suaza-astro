@@ -1,6 +1,6 @@
 ---
 import { format } from 'date-fns'
-const { title, date, currentPage } = Astro.props
+const { title, currentPage } = Astro.props
 
 export function getBasePath() {
   const site = Astro.site?.toString() || ''
@@ -20,7 +20,7 @@ export function getBasePath() {
     </p>
     <div class="overflow-x-auto rounded-md bg-gray-100">
       <pre
-        class="p-6 text-sm text-gray-700">"{title}". Observatorio de Determinantes Sociales de la Salud de Suaza, {format(date, 'dd/MM/yyyy')}, {currentPage == undefined ? getBasePath() : getBasePath() + currentPage}</pre>
+        class="p-6 text-sm text-gray-700">"{title}". Observatorio de Determinantes Sociales de la Salud de Suaza, {format(new Date(), 'dd/MM/yyyy')}, {currentPage == undefined ? getBasePath() : getBasePath() + currentPage}</pre>
     </div>
   </div>
 </div>

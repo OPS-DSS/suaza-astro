@@ -23,7 +23,6 @@ export interface PageProps {
   subdimensions?: string[]
   pages: unknown[]
   slug: string | undefined
-  date: Date
   source?: string
   yAxisLabel?: string
   data?: SuicideMortalityRow[]

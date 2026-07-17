@@ -160,7 +160,6 @@ export interface PageDefinition {
   slug: string | undefined
   title: string
   text: string
-  date: string
   navbar: boolean
   source?: string
   data?: SuicideMortalityRow[]
@@ -186,28 +185,24 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
       slug: undefined,
       title: 'Inicio',
       text: 'Bienvenidos al Observatorio de Determinantes Sociales de la Salud, un espacio dedicado a la recopilación, análisis y visualización de datos relacionados con la salud. Nuestro objetivo es proporcionar información precisa y actualizada para apoyar la toma de decisiones informadas en el ámbito de la salud pública.',
-      date: '2026-01-01',
       navbar: true,
     },
     {
       slug: 'analisis-de-inequidad',
       title: 'Análisis de Inequidad',
       text: 'Problemas, gráficos de tendencias y mediciones de brechas',
-      date: '2026-01-01',
       navbar: true,
     },
     {
       slug: 'determinantes-de-la-salud',
       title: 'Determinantes Sociales de la Salud',
       text: 'Factores que influyen en la salud de la población',
-      date: '2026-01-01',
       navbar: true,
     },
     {
       slug: 'analisis',
       title: 'Análisis Avanzado',
       text: 'Análisis de relaciones',
-      date: '2026-01-01',
       navbar: true,
     },
     {
@@ -215,7 +210,6 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
       title: 'Análisis de Mortalidad por Suicidio',
       text: 'Análisis de relaciones',
       description: 'Indicadores de análisis de datos y visualización.',
-      date: '2026-01-01',
       category: 'Tendencia',
       navbar: false,
       priority: false,
@@ -230,7 +224,6 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
         slug: `analisis-de-inequidad/${priority.slug}`,
         title: priority.title,
         text: priority.description,
-        date: priority.date,
         category: priority.category,
         source: priority.source,
         navbar: false,
@@ -240,7 +233,6 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
         slug: `determinantes-de-la-salud/${priority.slug}`,
         title: priority.title,
         text: priority.description,
-        date: priority.date,
         source: priority.source,
         category: priority.category,
         navbar: false,
@@ -255,7 +247,6 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
       text: ind.text,
       dimension: ind.dimension,
       subdimensions: ind.subdimensions,
-      date: ind.date,
       navbar: false,
       source: ind.source,
       yAxisLabel: ind.axisLabel,
@@ -291,13 +282,12 @@ export async function buildStaticPaths() {
   const datasets = await loadAllDatasets()
   const pages = buildPages(datasets)
 
-  return pages.map(({ slug, title, text, date, navbar, source, ...rest }) => ({
+  return pages.map(({ slug, title, text, navbar, source, ...rest }) => ({
     params: { slug },
     props: {
       title,
       text,
       slug,
-      date: new Date(date),
       navbar,
       source,
       pages,

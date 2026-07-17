@@ -2,7 +2,7 @@
 import NavBarMenu from '@/components/NavBarMenu.astro'
 import CiteThis from '@/components/CiteThis.astro'
 import '../styles/global.css'
-const { title, date, pages, currentPage } = Astro.props
+const { title, pages, currentPage } = Astro.props
 ---
 
 <!doctype html>
@@ -23,6 +23,6 @@ const { title, date, pages, currentPage } = Astro.props
     <main class="flex-1 min-h-0">
       <slot />
     </main>
-    {pages && <CiteThis title={title} date={date} currentPage={currentPage} />}
+    {pages && <CiteThis title={title} currentPage={currentPage} />}
   </body>
 </html>

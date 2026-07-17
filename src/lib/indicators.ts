@@ -9,7 +9,6 @@ export type IndicatorMeta = {
   title: string
   text: string
   description: string
-  date: string
   dimension: string
   subdimensions: string[]
   priority: boolean
@@ -26,7 +25,6 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     title: 'Aprobación',
     text: 'Aprobación',
     description: 'Aprobación',
-    date: '2026-07-15',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -40,7 +38,6 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     title: 'Reprobación',
     text: 'Reprobación',
     description: 'Reprobación',
-    date: '2026-07-15',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -54,7 +51,6 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     title: 'Cobertura bruta',
     text: 'Cobertura bruta',
     description: 'Cobertura bruta',
-    date: '2026-07-15',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -68,7 +64,6 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     title: 'Cobertura neta',
     text: 'Cobertura neta',
     description: 'Cobertura neta',
-    date: '2026-07-15',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -82,7 +77,6 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     title: 'Deserción',
     text: 'Deserción',
     description: 'Deserción',
-    date: '2026-07-15',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -96,7 +90,6 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     title: 'Repitencia',
     text: 'Repitencia',
     description: 'Repitencia',
-    date: '2026-07-15',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -110,7 +103,6 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     title: 'Aseguramiento en salud',
     text: 'Aseguramiento en salud',
     description: 'Aseguramiento en salud',
-    date: '2026-07-15',
     dimension: 'policy',
     subdimensions: ['programas sociales'],
     priority: true,

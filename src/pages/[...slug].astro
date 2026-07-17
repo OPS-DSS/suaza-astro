@@ -7,7 +7,7 @@ import type { PageProps } from '@/lib/pageRegistry'
 export const getStaticPaths = buildStaticPaths
 
 const props = Astro.props as PageProps
-const { title, text, pages, slug, date } = props
+const { title, text, pages, slug } = props
 
 const baseUrl = import.meta.env.BASE_URL
 const entry = pageRegistry[slug ?? '']
@@ -15,6 +15,6 @@ const Component = entry?.component
 const componentProps = entry?.resolveProps(props, baseUrl)
 ---
 
-<Layout title={title} text={text} date={date} pages={pages} currentPage={slug}>
+<Layout title={title} text={text} pages={pages} currentPage={slug}>
   {Component && <Component {...componentProps} />}
 </Layout>
