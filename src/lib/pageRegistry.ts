@@ -9,10 +9,9 @@ import DSSIndicator from '@/components/indicators/DSSIndicator.astro'
 import StratifiedIndicator from '@/components/indicators/StratifiedIndicator.astro'
 
 import type {
-  SuicideMortalityRateRow,
+  SuicideMortalityRow,
   ForestPlotDataRow,
   AnalyticsRow,
-  ScatterRow,
   SimpleRow,
   StratifiedRow,
 } from '@/lib/parquet'
@@ -26,17 +25,17 @@ export interface PageProps {
   slug: string | undefined
   date: Date
   source?: string
-  data?: SuicideMortalityRateRow[]
+  yAxisLabel?: string
+  data?: SuicideMortalityRow[]
   forestPlotData?: ForestPlotDataRow[]
   analyticsData?: AnalyticsRow[]
-  scatterData?: ScatterRow[]
   aprobacionData?: SimpleRow[]
   reprobacionData?: SimpleRow[]
   coberturaBrutaData?: SimpleRow[]
   coberturaNetaData?: SimpleRow[]
   desercionData?: SimpleRow[]
   repitenciaData?: SimpleRow[]
-  previsionSocialData?: StratifiedRow[]
+  aseguramientoData?: StratifiedRow[]
 }
 
 type PropsResolver = (
@@ -89,24 +88,27 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
   },
   'analisis/mortalidad-por-suicidio': {
     component: Analytics,
-    resolveProps: (
-      { title, text, forestPlotData, analyticsData, scatterData },
-      baseUrl,
-    ) => {
+    resolveProps: ({ title, text, forestPlotData, analyticsData }) => {
       return {
         title,
         text,
         forestPlotData,
         analyticsData,
-        scatterData,
-        csvUrl: base(baseUrl, 'suaza_scatter.csv'),
       }
     },
   },
   aprobacion: {
     component: DSSIndicator,
     resolveProps: (
-      { title, text, dimension, subdimensions, aprobacionData, source },
+      {
+        title,
+        text,
+        dimension,
+        subdimensions,
+        aprobacionData,
+        source,
+        yAxisLabel,
+      },
       baseUrl,
     ) => ({
       title,
@@ -115,14 +117,22 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       source,
       subdimensions: subdimensions ?? [],
       data: aprobacionData ?? [],
-      yAxisLabel: '%',
+      yAxisLabel: yAxisLabel ?? '%',
       csvPath: base(baseUrl, 'education_aprobacion.csv'),
     }),
   },
   reprobacion: {
     component: DSSIndicator,
     resolveProps: (
-      { title, text, dimension, subdimensions, reprobacionData, source },
+      {
+        title,
+        text,
+        dimension,
+        subdimensions,
+        reprobacionData,
+        source,
+        yAxisLabel,
+      },
       baseUrl,
     ) => ({
       title,
@@ -131,14 +141,22 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       source,
       subdimensions: subdimensions ?? [],
       data: reprobacionData ?? [],
-      yAxisLabel: '%',
+      yAxisLabel: yAxisLabel ?? '%',
       csvPath: base(baseUrl, 'education_reprobacion.csv'),
     }),
   },
   cobertura_bruta: {
     component: DSSIndicator,
     resolveProps: (
-      { title, text, dimension, subdimensions, coberturaBrutaData, source },
+      {
+        title,
+        text,
+        dimension,
+        subdimensions,
+        coberturaBrutaData,
+        source,
+        yAxisLabel,
+      },
       baseUrl,
     ) => ({
       title,
@@ -147,14 +165,22 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       source,
       subdimensions: subdimensions ?? [],
       data: coberturaBrutaData ?? [],
-      yAxisLabel: '%',
+      yAxisLabel: yAxisLabel ?? '%',
       csvPath: base(baseUrl, 'education_cobertura_bruta.csv'),
     }),
   },
   cobertura_neta: {
     component: DSSIndicator,
     resolveProps: (
-      { title, text, dimension, subdimensions, coberturaNetaData, source },
+      {
+        title,
+        text,
+        dimension,
+        subdimensions,
+        coberturaNetaData,
+        source,
+        yAxisLabel,
+      },
       baseUrl,
     ) => ({
       title,
@@ -163,14 +189,22 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       source,
       subdimensions: subdimensions ?? [],
       data: coberturaNetaData ?? [],
-      yAxisLabel: '%',
+      yAxisLabel: yAxisLabel ?? '%',
       csvPath: base(baseUrl, 'education_cobertura_neta.csv'),
     }),
   },
   desercion: {
     component: DSSIndicator,
     resolveProps: (
-      { title, text, dimension, subdimensions, desercionData, source },
+      {
+        title,
+        text,
+        dimension,
+        subdimensions,
+        desercionData,
+        source,
+        yAxisLabel,
+      },
       baseUrl,
     ) => ({
       title,
@@ -179,14 +213,22 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       source,
       subdimensions: subdimensions ?? [],
       data: desercionData ?? [],
-      yAxisLabel: '%',
+      yAxisLabel: yAxisLabel ?? '%',
       csvPath: base(baseUrl, 'education_desercion.csv'),
     }),
   },
   repitencia: {
     component: DSSIndicator,
     resolveProps: (
-      { title, text, dimension, subdimensions, repitenciaData, source },
+      {
+        title,
+        text,
+        dimension,
+        subdimensions,
+        repitenciaData,
+        source,
+        yAxisLabel,
+      },
       baseUrl,
     ) => ({
       title,
@@ -195,14 +237,22 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       source,
       subdimensions: subdimensions ?? [],
       data: repitenciaData ?? [],
-      yAxisLabel: '%',
+      yAxisLabel: yAxisLabel ?? '%',
       csvPath: base(baseUrl, 'education_repitencia.csv'),
     }),
   },
-  'prevision-social': {
+  aseguramiento: {
     component: StratifiedIndicator,
     resolveProps: (
-      { title, text, dimension, subdimensions, previsionSocialData, source },
+      {
+        title,
+        text,
+        dimension,
+        subdimensions,
+        aseguramientoData,
+        source,
+        yAxisLabel,
+      },
       baseUrl,
     ) => ({
       title,
@@ -210,9 +260,9 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       dimension,
       source,
       subdimensions: subdimensions ?? [],
-      data: previsionSocialData ?? [],
+      data: aseguramientoData ?? [],
       stratifiers: ['regimen'],
-      yAxisLabel: '%',
+      yAxisLabel: yAxisLabel ?? '%',
       csvPath: base(baseUrl, 'health_insurance.csv'),
     }),
   },

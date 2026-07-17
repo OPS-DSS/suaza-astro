@@ -2,9 +2,9 @@ import { DSLineChart } from '@ops-dss/charts/line-chart'
 import type { LineChartData } from '@ops-dss/charts/line-chart'
 import type { AnalyticsRow } from '@/lib/parquet'
 import {
-  ANALYTICS_INDICATORS,
+  indicatorsBySlug,
   type AnalyticsIndicatorKey,
-} from './mockIndicators'
+} from '@/lib/indicators'
 
 interface AnalyticsDualChartProps {
   data: AnalyticsRow[]
@@ -35,7 +35,7 @@ export const AnalyticsDualChart = ({
     )
   }
 
-  const indicatorMeta = ANALYTICS_INDICATORS[selectedIndicator]
+  const indicatorMeta = indicatorsBySlug[selectedIndicator]
   const mortalityData = data.map((row) => ({
     anio: row.anio,
     valor: row.valor,
@@ -61,7 +61,7 @@ export const AnalyticsDualChart = ({
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <DSLineChart
-            data={mortalityData}
+            data={mortalityData as LineChartData[]}
             xAxisKey="anio"
             lines={[
               {
@@ -74,6 +74,7 @@ export const AnalyticsDualChart = ({
             xAxisLabel="Año"
             yAxisLabel="Mortalidad por suicidio (×100k NV)"
             highlightX={selectedYear ?? undefined}
+            yAxisDomain={[0, 100]}
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -83,7 +84,7 @@ export const AnalyticsDualChart = ({
             lines={[
               {
                 dataKey: selectedIndicator,
-                name: indicatorMeta.label,
+                name: indicatorMeta.label ?? indicatorMeta.title,
                 color: indicatorMeta.color,
               },
             ]}
@@ -91,6 +92,7 @@ export const AnalyticsDualChart = ({
             xAxisLabel="Año"
             yAxisLabel={indicatorMeta.axisLabel}
             highlightX={selectedYear ?? undefined}
+            yAxisDomain={[0, 100]}
           />
         </div>
       </div>

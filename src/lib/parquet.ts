@@ -106,82 +106,31 @@ export async function readParquetAsObjects<T = Record<string, unknown>>(
  * Row from suicide_mortality_rate.parquet (mock SMV data)
  * Columns (by index): iso3[0], Territorio[1], cod_local[2], anio[3], sexo[4], zona[5], etnia[6], valor[7]
  */
-export type SuicideMortalityRateRawRow = unknown[]
+export type SuicideMortalityRawRow = unknown[]
 
-export type SuicideMortalityRateRow = {
+export type SuicideMortalityRow = {
   territorio: string
   anio: number
   sexo: string
-  valor: number
+  valor: number | null
 }
 
-export function filterSuicideMortalityRateRows(
-  rows: SuicideMortalityRateRawRow[],
-): SuicideMortalityRateRow[] {
-  const result: SuicideMortalityRateRow[] = []
+export function filterSuicideMortalityRows(
+  rows: SuicideMortalityRawRow[],
+): SuicideMortalityRow[] {
+  const result: SuicideMortalityRow[] = []
   for (const row of rows) {
     const territorio = String(row[1])
     const anio = Number(row[4])
     const sexo = String(row[5])
-    const valor = Number(row[6])
+    let valor: number | null = Number(row[6])
     if (!Number.isFinite(anio) || !Number.isFinite(valor)) continue
+    if (isNaN(valor) || valor === 0) valor = null
     result.push({ territorio, anio, sexo, valor })
   }
   return result.sort((a, b) => a.anio - b.anio).filter((r) => r.anio > 2010)
 }
 
-/**
- * Row from suicide_mortality_quintiles.parquet (resumen dataframe)
- * Columns: anio[0], quintil_dss[1], tasa_ponderada[2], n[3], total_pob[4],
- *          sd_pond[5], se[6], ic_inf[7], ic_sup[8]
- */
-export type SuicideMortalityQuintilRawRow = unknown[]
-
-export type SuicideMortalityQuintilRow = {
-  anio: number
-  quintil_dss: number
-  tasa_ponderada: number
-  n: number
-  total_pob: number
-  se: number
-  ic_inf: number
-  ic_sup: number
-}
-
-export function filterSuicideMortalityQuintilRows(
-  rows: SuicideMortalityQuintilRawRow[],
-): SuicideMortalityQuintilRow[] {
-  const result: SuicideMortalityQuintilRow[] = []
-  for (const row of rows) {
-    const anio = Number(row[0])
-    const quintil_dss = Number(row[1])
-    const tasa_ponderada = Number(row[2])
-    const n = Number(row[3])
-    const total_pob = Number(row[4])
-    const se = Number(row[6])
-    const ic_inf = Number(row[7])
-    const ic_sup = Number(row[8])
-    if (!Number.isFinite(anio) || !Number.isFinite(quintil_dss)) continue
-    result.push({
-      anio,
-      quintil_dss,
-      tasa_ponderada,
-      n,
-      total_pob,
-      se,
-      ic_inf,
-      ic_sup,
-    })
-  }
-  return result.sort((a, b) => a.anio - b.anio || a.quintil_dss - b.quintil_dss)
-}
-
-/**
- * Row from maternal_mortality_gaps.parquet (brecha_quintiles dataframe)
- * Columns: anio[0], valor_ref[1], valor_comp[2],
- *          brecha_absoluta[3], ic_inf_abs[4], ic_sup_abs[5],
- *          brecha_relativa[6], ic_inf_rel[7], ic_sup_rel[8]
- */
 export type SuicideMortalityGapsRawRow = unknown[]
 
 export type SuicideMortalityGapsRow = {
@@ -228,7 +177,7 @@ export type AnalyticsRawRow = unknown[]
 
 export type AnalyticsRow = {
   anio: number
-  valor: number
+  valor: number | null
   cobertura_bruta: number
   cobertura_neta: number
   desercion: number
@@ -242,8 +191,9 @@ export function filterAnalyticsRows(rows: AnalyticsRawRow[]): AnalyticsRow[] {
   const result: AnalyticsRow[] = []
   for (const row of rows) {
     const anio = Number(row[0])
-    const valor = Number(row[1])
-    if (!Number.isFinite(anio) || !Number.isFinite(valor)) continue
+    let valor: number | null = Number(row[1])
+    if (!Number.isFinite(anio)) continue
+    if (isNaN(valor) || valor == 0) valor = null
     result.push({
       anio,
       valor,
@@ -283,7 +233,11 @@ export function filterScatterRows(rows: ScatterRawRow[]): ScatterRow[] {
     const indicador = String(row[2])
     const label = String(row[3])
     const valor_suicidio = Number(row[5])
-    if (!Number.isFinite(anio) || !indicador || !Number.isFinite(valor_suicidio))
+    if (
+      !Number.isFinite(anio) ||
+      !indicador ||
+      !Number.isFinite(valor_suicidio)
+    )
       continue
     const rawIndicadorValue = row[4] == null ? NaN : Number(row[4])
     result.push({
@@ -291,7 +245,9 @@ export function filterScatterRows(rows: ScatterRawRow[]): ScatterRow[] {
       indicador,
       label,
       valor_indicador:
-        indicador === 'aseguramiento' ? rawIndicadorValue * 100 : rawIndicadorValue,
+        indicador === 'aseguramiento'
+          ? rawIndicadorValue * 100
+          : rawIndicadorValue,
       valor_suicidio,
     })
   }

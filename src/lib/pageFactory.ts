@@ -1,10 +1,9 @@
 import {
   readParquet,
   dataPath,
-  filterSuicideMortalityRateRows,
+  filterSuicideMortalityRows,
   filterForestPlotRows,
   filterAnalyticsRows,
-  filterScatterRows,
   filterSimpleRows,
   filterStratifiedRows,
 } from './parquet'
@@ -13,14 +12,12 @@ import { priorities } from '@/lib/priority'
 import type { PriorityMeta } from '@/lib/priority'
 
 import type {
-  SuicideMortalityRateRawRow,
-  SuicideMortalityRateRow,
+  SuicideMortalityRawRow,
+  SuicideMortalityRow,
   ForestPlotRawRow,
   ForestPlotDataRow,
   AnalyticsRawRow,
   AnalyticsRow,
-  ScatterRawRow,
-  ScatterRow,
   SimpleRow,
   SimpleRawRow,
   StratifiedRawRow,
@@ -32,15 +29,14 @@ import type {
 export interface PageDatasets {
   forestPlotData: ForestPlotDataRow[]
   analyticsData: AnalyticsRow[]
-  scatterData: ScatterRow[]
-  suicideMortalityRateData: SuicideMortalityRateRow[]
+  suicideMortalityData: SuicideMortalityRow[]
   aprobacionData: SimpleRow[]
   reprobacionData: SimpleRow[]
   coberturaBrutaData: SimpleRow[]
   coberturaNetaData: SimpleRow[]
   desercionData: SimpleRow[]
   repitenciaData: SimpleRow[]
-  previsionSocialData: StratifiedRow[]
+  aseguramientoData: StratifiedRow[]
 }
 
 export async function loadAllDatasets(): Promise<PageDatasets> {
@@ -64,22 +60,12 @@ export async function loadAllDatasets(): Promise<PageDatasets> {
     console.error('[loadAllDatasets] suaza_analytics:', e)
   }
 
-  let scatterData: ScatterRow[] = []
+  let suicideMortalityData: SuicideMortalityRow[] = []
   try {
-    const rows = await readParquet<ScatterRawRow>(
-      dataPath('suaza_scatter.parquet'),
-    )
-    scatterData = filterScatterRows(rows)
-  } catch (e) {
-    console.error('[loadAllDatasets] suaza_scatter:', e)
-  }
-
-  let suicideMortalityRateData: SuicideMortalityRateRow[] = []
-  try {
-    const rows = await readParquet<SuicideMortalityRateRawRow>(
+    const rows = await readParquet<SuicideMortalityRawRow>(
       dataPath('suicide_mortality.parquet'),
     )
-    suicideMortalityRateData = filterSuicideMortalityRateRows(rows)
+    suicideMortalityData = filterSuicideMortalityRows(rows)
   } catch (e) {
     console.error('[loadAllDatasets] suicide_mortality:', e)
   }
@@ -144,28 +130,27 @@ export async function loadAllDatasets(): Promise<PageDatasets> {
     console.error('[loadAllDatasets] repitencia:', e)
   }
 
-  let previsionSocialData: StratifiedRow[] = []
+  let aseguramientoData: StratifiedRow[] = []
   try {
     const rows = await readParquet<StratifiedRawRow>(
       dataPath('health_insurance.parquet'),
     )
-    previsionSocialData = filterStratifiedRows(rows)
+    aseguramientoData = filterStratifiedRows(rows)
   } catch (e) {
-    console.error('[loadAllDatasets] prevision-social:', e)
+    console.error('[loadAllDatasets] aseguramiento:', e)
   }
 
   return {
     forestPlotData,
     analyticsData,
-    scatterData,
-    suicideMortalityRateData,
+    suicideMortalityData,
     aprobacionData,
     reprobacionData,
     coberturaBrutaData,
     coberturaNetaData,
     desercionData,
     repitenciaData,
-    previsionSocialData,
+    aseguramientoData,
   }
 }
 
@@ -178,10 +163,9 @@ export interface PageDefinition {
   date: string
   navbar: boolean
   source?: string
-  data?: SuicideMortalityRateRow[]
+  data?: SuicideMortalityRow[]
   forestPlotData?: ForestPlotDataRow[]
   analyticsData?: AnalyticsRow[]
-  scatterData?: ScatterRow[]
   dimension?: string
   subdimensions?: string[]
   description?: string
@@ -193,7 +177,7 @@ export interface PageDefinition {
   coberturaNetaData?: SimpleRow[]
   desercionData?: SimpleRow[]
   repitenciaData?: SimpleRow[]
-  previsionSocialData?: StratifiedRow[]
+  aseguramientoData?: StratifiedRow[]
 }
 
 export function buildPages(datasets: PageDatasets): PageDefinition[] {
@@ -237,7 +221,6 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
       priority: false,
       forestPlotData: datasets.forestPlotData,
       analyticsData: datasets.analyticsData,
-      scatterData: datasets.scatterData,
     },
   ]
 
@@ -251,7 +234,7 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
         category: priority.category,
         source: priority.source,
         navbar: false,
-        data: datasets.suicideMortalityRateData,
+        data: datasets.suicideMortalityData,
       },
       {
         slug: `determinantes-de-la-salud/${priority.slug}`,
@@ -275,6 +258,7 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
       date: ind.date,
       navbar: false,
       source: ind.source,
+      yAxisLabel: ind.axisLabel,
       ...(ind.slug === 'aprobacion'
         ? { aprobacionData: datasets.aprobacionData }
         : {}),
@@ -293,8 +277,8 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
       ...(ind.slug === 'repitencia'
         ? { repitenciaData: datasets.repitenciaData }
         : {}),
-      ...(ind.slug === 'prevision-social'
-        ? { previsionSocialData: datasets.previsionSocialData }
+      ...(ind.slug === 'aseguramiento'
+        ? { aseguramientoData: datasets.aseguramientoData }
         : {}),
     }),
   )

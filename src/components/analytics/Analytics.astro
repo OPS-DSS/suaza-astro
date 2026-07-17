@@ -1,18 +1,16 @@
 ---
 import { AnalyticsPageContent } from './AnalyticsPageContent'
-import type { ForestPlotDataRow, AnalyticsRow, ScatterRow } from '@/lib/parquet'
-import type { AnalyticsIndicatorKey } from './mockIndicators'
+import type { ForestPlotDataRow, AnalyticsRow } from '@/lib/parquet'
 
 interface Props {
   title: string
   text: string
   forestPlotData?: ForestPlotDataRow[]
   analyticsData?: AnalyticsRow[]
-  scatterData?: ScatterRow[]
   csvUrl?: string
 }
 
-const { title, forestPlotData, analyticsData, scatterData } = Astro.props
+const { title, forestPlotData, analyticsData } = Astro.props
 ---
 
 <div class="mx-auto max-w-[120em] px-2 sm:px-6 lg:px-10 mb-16">
@@ -21,7 +19,6 @@ const { title, forestPlotData, analyticsData, scatterData } = Astro.props
     <AnalyticsPageContent
       forestPlotData={forestPlotData}
       analyticsData={analyticsData}
-      scatterData={scatterData}
       client:only="react"
     />
   </div>

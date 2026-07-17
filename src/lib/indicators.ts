@@ -15,6 +15,9 @@ export type IndicatorMeta = {
   priority: boolean
   stratifiers?: IndicatorStratifier[]
   source: string
+  label?: string
+  axisLabel?: string
+  color?: string
 }
 
 export const suicideMortalityIndicators: IndicatorMeta[] = [
@@ -28,6 +31,9 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     subdimensions: ['educación'],
     priority: true,
     source: 'Registros territoriales de aprobación',
+    label: 'Aprobación escolar',
+    axisLabel: '% aprobación escolar',
+    color: '#10b981',
   },
   {
     slug: 'reprobacion',
@@ -39,6 +45,9 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     subdimensions: ['educación'],
     priority: true,
     source: 'Registros territoriales de reprobación',
+    label: 'Reprobación escolar',
+    axisLabel: '% reprobación escolar',
+    color: '#3b82f6',
   },
   {
     slug: 'cobertura_bruta',
@@ -50,6 +59,9 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     subdimensions: ['educación'],
     priority: true,
     source: 'Registros territoriales de cobertura bruta',
+    label: 'Cobertura bruta educativa',
+    axisLabel: '% cobertura bruta',
+    color: '#6366f1',
   },
   {
     slug: 'cobertura_neta',
@@ -61,6 +73,9 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     subdimensions: ['educación'],
     priority: true,
     source: 'Registros territoriales de cobertura neta',
+    label: 'Cobertura neta educativa',
+    axisLabel: '% cobertura neta',
+    color: '#8b5cf6',
   },
   {
     slug: 'desercion',
@@ -72,6 +87,9 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     subdimensions: ['educación'],
     priority: true,
     source: 'Registros territoriales de deserción',
+    label: 'Deserción escolar',
+    axisLabel: '% deserción escolar',
+    color: '#f59e0b',
   },
   {
     slug: 'repitencia',
@@ -83,17 +101,37 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     subdimensions: ['educación'],
     priority: true,
     source: 'Registros territoriales de repitencia',
+    label: 'Repitencia escolar',
+    axisLabel: '% repitencia escolar',
+    color: '#ec4899',
   },
   {
-    slug: 'prevision-social',
-    title: 'Previsión social',
-    text: 'Previsión social',
-    description: 'Previsión social',
+    slug: 'aseguramiento',
+    title: 'Aseguramiento en salud',
+    text: 'Aseguramiento en salud',
+    description: 'Aseguramiento en salud',
     date: '2026-07-15',
     dimension: 'policy',
     subdimensions: ['programas sociales'],
     priority: true,
     stratifiers: ['regimen'],
     source: 'Registros administrativos del sistema previsional',
+    label: 'Cobertura de aseguramiento en salud',
+    axisLabel: '% cobertura de aseguramiento',
+    color: '#06b6d4',
   },
 ]
+
+/** Analytics correlation/trends views index indicators by slug. */
+export type AnalyticsIndicatorKey =
+  | 'cobertura_bruta'
+  | 'cobertura_neta'
+  | 'desercion'
+  | 'aprobacion'
+  | 'reprobacion'
+  | 'repitencia'
+  | 'aseguramiento'
+
+export const indicatorsBySlug = Object.fromEntries(
+  suicideMortalityIndicators.map((ind) => [ind.slug, ind]),
+) as Record<AnalyticsIndicatorKey, IndicatorMeta>

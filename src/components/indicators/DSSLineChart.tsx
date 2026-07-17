@@ -1,27 +1,8 @@
-import { useState, useMemo, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { DSLineChart } from '@ops-dss/charts/line-chart'
 import type { SimpleRow } from '@/lib/parquet'
 import { ExpandablePanel } from '../ExpandablePanel'
-
-const DownloadIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-    <polyline points="7 10 12 15 17 10" />
-    <line x1="12" y1="15" x2="12" y2="3" />
-  </svg>
-)
-
-// ── Component ─────────────────────────────────────────────────────────────────
+import { Icon } from '@iconify/react'
 
 interface StratifiedLineChartProps {
   data: SimpleRow[]
@@ -47,7 +28,6 @@ export const DSSLineChart = ({
 
   return (
     <div style={{ width: '100%', margin: '0 auto' }}>
-      {/* ── Stratifier selector ─────────────────────────────────────────────── */}
       <div className="flex flex-wrap justify-between gap-1 mb-4">
         <div className="flex rounded-lg overflow-hidden border border-gray-200 text-sm">
           <button
@@ -73,19 +53,17 @@ export const DSSLineChart = ({
             Tabla
           </button>
         </div>
-
         {csvPath && (
           <a
             href={csvPath}
             download
             className="flex items-center gap-1.5 px-4 py-1.5 text-sm rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition-colors"
           >
-            <DownloadIcon />
+            <Icon icon="mdi:download" className="size-4 opacity-50" />
             Descargar tabla
           </a>
         )}
       </div>
-      {/* ── Chart or Table ─────────────────────────────────────────────────── */}
       {view === 'chart' ? (
         <ExpandablePanel className="relative border rounded-lg px-4 pt-6">
           {(isFullscreen) => (
