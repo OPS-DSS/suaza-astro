@@ -35,6 +35,7 @@ export interface PageProps {
   desercionData?: SimpleRow[]
   repitenciaData?: SimpleRow[]
   aseguramientoData?: StratifiedRow[]
+  formalidadData?: SimpleRow[]
 }
 
 type PropsResolver = (
@@ -263,6 +264,30 @@ export const pageRegistry: Record<string, PageRegistryEntry> = {
       stratifiers: ['regimen'],
       yAxisLabel: yAxisLabel ?? '%',
       csvPath: base(baseUrl, 'health_insurance.csv'),
+    }),
+  },
+  formalidad: {
+    component: DSSIndicator,
+    resolveProps: (
+      {
+        title,
+        text,
+        dimension,
+        subdimensions,
+        formalidadData,
+        source,
+        yAxisLabel,
+      },
+      baseUrl,
+    ) => ({
+      title,
+      text,
+      dimension,
+      source,
+      subdimensions: subdimensions ?? [],
+      data: formalidadData ?? [],
+      yAxisLabel: yAxisLabel ?? '%',
+      csvPath: base(baseUrl, 'formal_employment.csv'),
     }),
   },
 }

@@ -22,9 +22,10 @@ export type IndicatorMeta = {
 export const suicideMortalityIndicators: IndicatorMeta[] = [
   {
     slug: 'aprobacion',
-    title: 'Aprobación',
-    text: 'Aprobación',
-    description: 'Aprobación',
+    title: 'Tasa de aprobación',
+    text: 'Porcentaje de estudiantes que aprueban el grado cursado al finalizar el año lectivo, respecto del total de estudiantes evaluados.',
+    description:
+      'Porcentaje de estudiantes que aprueban el grado cursado al finalizar el año lectivo, respecto del total de estudiantes evaluados.',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -35,9 +36,10 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
   },
   {
     slug: 'reprobacion',
-    title: 'Reprobación',
-    text: 'Reprobación',
-    description: 'Reprobación',
+    title: 'Tasa de reprobación',
+    text: 'Porcentaje de estudiantes que no cumplen los requisitos para aprobar el grado cursado, respecto del total de estudiantes evaluados.',
+    description:
+      'Porcentaje de estudiantes que no cumplen los requisitos para aprobar el grado cursado, respecto del total de estudiantes evaluados.',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -49,8 +51,9 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
   {
     slug: 'cobertura_bruta',
     title: 'Cobertura bruta',
-    text: 'Cobertura bruta',
-    description: 'Cobertura bruta',
+    text: 'Relación porcentual entre el total de estudiantes matriculados en un nivel educativo, independientemente de su edad, y la población en edad teórica para cursar dicho nivel. Puede ser superior al 100%.',
+    description:
+      'Relación porcentual entre el total de estudiantes matriculados en un nivel educativo, independientemente de su edad, y la población en edad teórica para cursar dicho nivel. Puede ser superior al 100%.',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -62,8 +65,9 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
   {
     slug: 'cobertura_neta',
     title: 'Cobertura neta',
-    text: 'Cobertura neta',
-    description: 'Cobertura neta',
+    text: 'Relación porcentual entre los estudiantes matriculados con la edad oficial correspondiente a un nivel educativo y la población en esa misma edad. Su valor máximo es 100%.',
+    description:
+      'Relación porcentual entre los estudiantes matriculados con la edad oficial correspondiente a un nivel educativo y la población en esa misma edad. Su valor máximo es 100%.',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -74,9 +78,10 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
   },
   {
     slug: 'desercion',
-    title: 'Deserción',
-    text: 'Deserción',
-    description: 'Deserción',
+    title: 'Tasa de deserción',
+    text: 'Porcentaje de estudiantes que abandonan el sistema educativo durante el año lectivo o que no continúan matriculados en el siguiente período escolar.',
+    description:
+      'Porcentaje de estudiantes que abandonan el sistema educativo durante el año lectivo o que no continúan matriculados en el siguiente período escolar.',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -87,9 +92,10 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
   },
   {
     slug: 'repitencia',
-    title: 'Repitencia',
-    text: 'Repitencia',
-    description: 'Repitencia',
+    title: 'Tasa de repitencia',
+    text: 'Porcentaje de estudiantes que deben cursar nuevamente el mismo grado en el siguiente año lectivo.',
+    description:
+      'Porcentaje de estudiantes que deben cursar nuevamente el mismo grado en el siguiente año lectivo.',
     dimension: 'dss',
     subdimensions: ['educación'],
     priority: true,
@@ -100,9 +106,10 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
   },
   {
     slug: 'aseguramiento',
-    title: 'Aseguramiento en salud',
-    text: 'Aseguramiento en salud',
-    description: 'Aseguramiento en salud',
+    title: 'Porcentaje de población afiliada al sistema de salud',
+    text: 'Proporción de población afiliada al sistema de seguridad social en salud (Contributivo- Subsidiado y Excepción).',
+    description:
+      'Proporción de población afiliada al sistema de seguridad social en salud (Contributivo- Subsidiado y Excepción).',
     dimension: 'policy',
     subdimensions: ['programas sociales'],
     priority: true,
@@ -110,6 +117,21 @@ export const suicideMortalityIndicators: IndicatorMeta[] = [
     source: 'Registros administrativos del sistema previsional',
     label: 'Cobertura de aseguramiento en salud',
     axisLabel: '% cobertura de aseguramiento',
+    color: '#06b6d4',
+  },
+  {
+    slug: 'formalidad',
+    title: 'Formalidad',
+    text: 'Porcentaje de personas ocupadas formalmente con respecto a la población total',
+    description:
+      'Porcentaje de personas ocupadas formalmente con respecto a la población total',
+    dimension: 'dss',
+    subdimensions: ['empleo'],
+    priority: true,
+    stratifiers: ['regimen'],
+    source: 'Registros administrativos del sistema previsional',
+    label: 'Cobertura de formalidad',
+    axisLabel: '% cobertura de formalidad',
     color: '#06b6d4',
   },
 ]
@@ -123,6 +145,7 @@ export type AnalyticsIndicatorKey =
   | 'reprobacion'
   | 'repitencia'
   | 'aseguramiento'
+  | 'formalidad'
 
 export const indicatorsBySlug = Object.fromEntries(
   suicideMortalityIndicators.map((ind) => [ind.slug, ind]),

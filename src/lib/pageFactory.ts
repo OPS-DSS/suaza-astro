@@ -37,6 +37,7 @@ export interface PageDatasets {
   desercionData: SimpleRow[]
   repitenciaData: SimpleRow[]
   aseguramientoData: StratifiedRow[]
+  formalidadData: SimpleRow[]
 }
 
 export async function loadAllDatasets(): Promise<PageDatasets> {
@@ -140,6 +141,16 @@ export async function loadAllDatasets(): Promise<PageDatasets> {
     console.error('[loadAllDatasets] aseguramiento:', e)
   }
 
+  let formalidadData: SimpleRow[] = []
+  try {
+    const rows = await readParquet<SimpleRawRow>(
+      dataPath('formal_employment.parquet'),
+    )
+    formalidadData = filterSimpleRows(rows)
+  } catch (e) {
+    console.error('[loadAllDatasets] formalidad:', e)
+  }
+
   return {
     forestPlotData,
     analyticsData,
@@ -151,6 +162,7 @@ export async function loadAllDatasets(): Promise<PageDatasets> {
     desercionData,
     repitenciaData,
     aseguramientoData,
+    formalidadData,
   }
 }
 
@@ -177,6 +189,7 @@ export interface PageDefinition {
   desercionData?: SimpleRow[]
   repitenciaData?: SimpleRow[]
   aseguramientoData?: StratifiedRow[]
+  formalidadData?: SimpleRow[]
 }
 
 export function buildPages(datasets: PageDatasets): PageDefinition[] {
@@ -270,6 +283,9 @@ export function buildPages(datasets: PageDatasets): PageDefinition[] {
         : {}),
       ...(ind.slug === 'aseguramiento'
         ? { aseguramientoData: datasets.aseguramientoData }
+        : {}),
+      ...(ind.slug === 'formalidad'
+        ? { formalidadData: datasets.formalidadData }
         : {}),
     }),
   )

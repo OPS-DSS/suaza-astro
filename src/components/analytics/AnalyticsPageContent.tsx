@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { DSForestPlot } from '@ops-dss/charts/forest-plot'
 import { AnalyticsDualChart } from './AnalyticsDualChart'
 import { ExpandablePanel } from '@/components/ExpandablePanel'
