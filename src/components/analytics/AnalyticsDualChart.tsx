@@ -1,10 +1,7 @@
 import { DSLineChart } from '@ops-dss/charts/line-chart'
 import type { LineChartData } from '@ops-dss/charts/line-chart'
 import type { AnalyticsRow } from '@/lib/parquet'
-import {
-  indicatorsBySlug,
-  type AnalyticsIndicatorKey,
-} from '@/lib/indicators'
+import { indicatorsBySlug, type AnalyticsIndicatorKey } from '@/lib/indicators'
 
 interface AnalyticsDualChartProps {
   data: AnalyticsRow[]

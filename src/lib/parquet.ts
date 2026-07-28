@@ -185,6 +185,7 @@ export type AnalyticsRow = {
   reprobacion: number
   repitencia: number
   aseguramiento: number
+  formalidad: number
 }
 
 export function filterAnalyticsRows(rows: AnalyticsRawRow[]): AnalyticsRow[] {
@@ -204,6 +205,7 @@ export function filterAnalyticsRows(rows: AnalyticsRawRow[]): AnalyticsRow[] {
       reprobacion: row[6] == null ? NaN : Number(row[6]),
       repitencia: row[7] == null ? NaN : Number(row[7]),
       aseguramiento: row[8] == null ? NaN : Number(row[8]) * 100,
+      formalidad: row[9] == null ? NaN : Number(row[9]),
     })
   }
   return result.sort((a, b) => a.anio - b.anio)
